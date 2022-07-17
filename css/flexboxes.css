@@ -1,0 +1,16 @@
+.column-container, .left, .right {
+    display: flex;
+    flex-flow: row nowrap;
+}
+.column-container > * {
+
+}
+.column-container {
+    justify-content: space-between;
+}
+.left {
+    justify-content: flex-start;
+}
+.right {
+    justify-content: flex-end;
+}
