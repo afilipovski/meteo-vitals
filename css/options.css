@@ -1,0 +1,41 @@
+#options-menu {
+     padding: 15px;
+     width: 400px;
+     position: absolute;
+     right: 0;
+     background: #444;
+     color: white;
+}
+#options-menu .flag {
+     height: 25px;
+     padding: 5px;
+}
+#options-menu fieldset {
+     border: 0;
+     margin: 0;
+}
+#options-menu legend {
+     float:left;
+     clear: both;
+}
+#options-menu input {
+     vertical-align: middle;
+     margin-top: -2.25px;
+}
+#options-menu h3, #options-menu p {
+     margin: 0;
+}
+#options-menu * {
+     padding: 0;
+}
+#options-menu:not(.active) {
+     display: none;
+}
+
+@media (max-width: 550px) {
+     #options-menu {
+          width: 100vw;
+          max-width: 100vw;
+          position: relative;
+     }
+}

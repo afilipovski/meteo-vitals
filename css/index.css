@@ -1,20 +1,11 @@
+* {
+    box-sizing: border-box;
+}
 body {
     margin: 0;
+    padding: 0;
+    font-family: sans-serif;
 }
-nav {
-    display: flex;
-    flex-flow: row nowrap;
-    height: 4rem;
-    background: lightgray;
-}
-nav h2 {
-    display: table-cell;
-    vertical-align: middle;
-}
-svg {
-    padding-left: 1rem;
-    height: 4rem;
-}
-svg path {
-    fill:white;
+.todo {
+    background: darkcyan;
 }

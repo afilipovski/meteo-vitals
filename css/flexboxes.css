@@ -1,11 +1,12 @@
-.column-container, .left, .right {
+.cols, .left, .right {
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
+    align-items: center;
 }
-.column-container > * {
-
+.nowrap {
+    flex-wrap: nowrap;
 }
-.column-container {
+.cols {
     justify-content: space-between;
 }
 .left {
