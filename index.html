@@ -9,20 +9,56 @@
     <link rel="stylesheet" href="css/flexboxes.css">
     <link rel="stylesheet" href="css/nav.css">
     <link rel="stylesheet" href="css/options.css">
+    <link rel="stylesheet" href="css/main.css">
     <script src="js/basicutils.js"></script>
 </head>
 <body>
     <nav class="cols">
         <div class="left nowrap">
-            <svg id="logo" fill="#fff" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
-                <path d="m446.39 319-54.389 131-55-131-84.385 204h-252.62v-45h204l134-327.53 54 129.53 54.728-131.5 209.51 510.5 74.264-180.98 269.5-0.0208v45l-220 2.6206-123 301.57z" fill="#fff"/>
-            </svg>
+
+            <svg id="logo" version="1.1" viewBox="0 0 1e3 1e3" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <clipPath id="clipPath15259">
+                        <path d="m-3372.6-4264.5 147.33 353.65 94.61-227.97h268.47l-1.3964-92.166-91.817-168.97-206.68-76.805-230.41 26.533-20.947 50.272z" fill-opacity=".37021" stroke-width="1.2975"/>
+                    </clipPath>
+                </defs>
+                <path id="logo-mv" d="m446.39 319-54.389 131-55-131-84.385 204h-252.62v-45h204l134-327.53 54 129.53 54.728-131.5 209.51 510.5 74.264-180.98 269.5-0.0208v45l-220 2.6206-123 301.57z"/>
+                <g transform="matrix(.77071 0 0 .77071 3142 3662.3)">
+                    <path id="logo-sun" d="m-3176.4-4313.1c60.451 12.436 105.37 43.445 141.43 97.623 37.015 55.617 47.377 108.19
+                    33.922 172.1-263.36 586.69-689.25-354.15-175.35-269.72zm189.27 338.43c5.268-7.2515 12.542-48.39
+                    21.551-47.425 134.4 56.931-22.467 87.267-21.551 47.425zm24.635-77.349c-1.0016-1.5201-0.8121-7.6673
+                    0.4209-13.66 1.2329-5.993 1.8915-18.892 1.463-28.664-0.4282-9.7722 0.3922-18.539 1.8229-19.481
+                    2.1755-1.4334 106.55 31.504 108.44 34.221 0.343 0.4931-24.34 7.5236-54.852 15.623-30.512
+                    8.0993-56.296 13.482-57.297 11.962zm-11.933-120.57c-5.5672-17.493-9.6722-31.92-9.1217-32.059
+                    5.3433-1.353 110.45-3.4945 111.19-2.2653 0.5366 0.9-19.93 16.147-45.483 33.883l-46.46
+                    32.248zm-404.34-141.67c-1.0118-6.2535-5.0781-26.209-9.0361-44.346-13.078-59.928-13.203-60.756-8.4812-56.464
+                    7.5963 6.9052 72.608 72.497 74.918 75.586 1.2248 1.6383-10.775 10.542-26.667 19.786l-28.894
+                    16.807zm371.84 75.237c-4.6339-7.3732-14.026-19.276-20.871-26.451l-12.446-13.045
+                    52.632-21.494c28.947-11.822 53.074-20.914 53.615-20.205 0.8082 1.0602-60.381 91.458-63.533
+                    93.86-0.5352 0.408-4.7636-5.2914-9.3977-12.664zm-282.49-133.5c1.9646-15.419 5.3719-41.809
+                    7.5718-58.645l3.9996-30.611 24.942 53.53c13.718 29.442 24.249 53.899 23.402 54.35-0.847
+                    0.451-12.428 2.1783-25.736 3.8386-13.308 1.6602-27.246 3.593-30.974 4.2946-5.8389
+                    1.0995-6.2827-2.6045-3.2055-26.758zm217.37 68.165c-3.6226-3.2308-14.792-10.388-24.819-15.905l-18.233-10.031
+                    41.406-37.505c22.773-20.628 41.998-36.605 42.723-35.504 0.725 1.1004-4.8195 25.584-12.322 54.407-14.098
+                    54.166-15.509 56.352-28.756 44.538zm-128.88-51.851c0.2811-1.3669 12.467-24.664 27.08-51.772l26.569-49.287
+                    5.035 57.397c2.7693 31.568 5.0023 57.832 4.9621 58.364-0.043
+                    0.5312-14.492-1.9989-32.115-5.6245-17.623-3.6254-31.812-7.7101-31.531-9.077z"
+                          clip-path="url(#clipPath15259)" fill="#ffd42a" stroke-width=".75548"/></g></svg>
             <h2 id="title">Meteo Vitals</h2>
         </div>
-        <div id="search-bar" class="cols nowrap">
+        <div id="nav-search" class="cols nowrap">
             <img src="images/Linecons_location-gps.svg" alt="">
-            <input type="text" placeholder="Search...">
+            <input id="search-input" type="text" placeholder="Search..." onclick="activate(this.id)">
             <img src="images/Magnifying_glass_icon.svg" alt="">
+            <ul id="autocomplete">
+                <li>Skopje, MK</li>
+                <li>Tetovo, MK</li>
+                <li>Gostivar, MK</li>
+                <li>Mavrovi Anovi, MK</li>
+                <li>Kichevo, MK</li>
+                <li>Struga, MK</li>
+                <li>Ohrid, MK</li>
+            </ul>
         </div>
         <div class="right nowrap">
             <svg fill="none" stroke="#fff" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
@@ -42,8 +78,8 @@
         <div class="cols">
             <p>Language:</p>
             <div>
-                <img class="flag" src="images/Flag_of_North_Macedonia.svg" alt="Македонски">
-                <img class="flag" src="images/Flag_of_the_United_Kingdom.svg" alt="English">
+                <img class="flag" src="images/Flag_of_North_Macedonia.svg" alt="Македонски" title="Македонски">
+                <img class="flag" src="images/Flag_of_the_United_Kingdom.svg" alt="English" title="English">
             </div>
         </div>
         <fieldset class="cols">
@@ -82,7 +118,10 @@
         <h3>View</h3>
 
     </div>
-    <p>lol</p>
+    <div id="main-content">
+        <h1>Welcome to Meteo Vitals</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet aperiam architecto hic ratione soluta, vitae voluptatem? Aspernatur odio tenetur veritatis. Ab accusantium, consequatur dignissimos eaque expedita facilis maiores nihil unde.</p>
+    </div>
 </body>
 </html>
 <!--

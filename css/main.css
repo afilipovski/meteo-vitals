@@ -1,0 +1,7 @@
+#main-content {
+    max-width: min(90%, 900px);
+    margin: auto;
+}
+#main-content h1 {
+    text-align: center;
+}

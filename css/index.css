@@ -9,3 +9,14 @@ body {
 .todo {
     background: darkcyan;
 }
+ul {
+    margin: 0;
+    list-style: none;
+    text-indent: 0;
+    padding: 0;
+}
+/* SAFARI ROUNDING HACK */
+input:not([type="radio"]):not([type="checkbox"]) {
+    -webkit-appearance: none;
+    border-radius: 0;
+}
