@@ -10,13 +10,25 @@
     <link rel="stylesheet" href="css/nav.css">
     <link rel="stylesheet" href="css/options.css">
     <link rel="stylesheet" href="css/main.css">
-    <script src="js/basicutils.js"></script>
+    <!-- DIREKTIVI -->
+    <script>
+        //pecatenje za activate() i deactivate() vo interface.js, updateSetting() vo options.js
+        const debug = false;
+        //500ms zastoj za URLRequest(), simulacija za asinhron tek na skriptata
+        const simulateDelay = false;
+        //pecatenje na URLRequest() baranja
+        const printRequest = false;
+    </script>
+
+    <script src="js/interface.js"></script>
+    <script type="module" src="js/location.js"></script>
+    <script src="js/options.js" defer></script>
 </head>
 <body>
     <nav class="cols">
         <div class="left nowrap">
 
-            <svg id="logo" version="1.1" viewBox="0 0 1e3 1e3" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+            <svg id="logo" viewBox="0 0 1e3 1e3" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <clipPath id="clipPath15259">
                         <path d="m-3372.6-4264.5 147.33 353.65 94.61-227.97h268.47l-1.3964-92.166-91.817-168.97-206.68-76.805-230.41 26.533-20.947 50.272z" fill-opacity=".37021" stroke-width="1.2975"/>
@@ -48,7 +60,7 @@
         </div>
         <div id="nav-search" class="cols nowrap">
             <img src="images/Linecons_location-gps.svg" alt="">
-            <input id="search-input" type="text" placeholder="Search..." onclick="activate(this.id)">
+            <input id="search-input" type="text" placeholder="Search..." onclick="activate('autocomplete')">
             <img src="images/Magnifying_glass_icon.svg" alt="">
             <ul id="autocomplete">
                 <li>Skopje, MK</li>
@@ -75,41 +87,45 @@
         <h3>Sync</h3>
         <p class="todo">To-do: Da se dodade google login kopce</p>
         <h3>Language & Time</h3>
-        <div class="cols">
-            <p>Language:</p>
+        <fieldset id="language" class="cols">
+            <legend>Language:</legend>
             <div>
-                <img class="flag" src="images/Flag_of_North_Macedonia.svg" alt="Македонски" title="Македонски">
-                <img class="flag" src="images/Flag_of_the_United_Kingdom.svg" alt="English" title="English">
-            </div>
-        </div>
-        <fieldset class="cols">
-            <legend>Time format: </legend>
-            <div>
-            <input type="radio" id="24hour"><label for="24hour">24-hour</label>
-            <input type="radio" id="12hour"><label for="12hour">12-hour</label>
+                <input type="radio" id="macedonian"><label for="macedonian">
+                    <img class="flag" src="images/Flag_of_North_Macedonia.svg" alt="Македонски" title="Македонски">
+                </label>
+                <input type="radio" id="english"><label for="english">
+                    <img class="flag" src="images/Flag_of_the_United_Kingdom.svg" alt="English" title="English">
+                </label>
             </div>
         </fieldset>
-        <fieldset class="cols">
+        <fieldset id="time-format" class="cols">
+            <legend>Time format: </legend>
+            <div>
+                <input type="radio" id="24hour"><label for="24hour">24-hour</label>
+                <input type="radio" id="12hour"><label for="12hour">12-hour</label>
+            </div>
+        </fieldset>
+        <fieldset id="dates" class="cols">
             <legend>Dates: </legend>
             <div>
-            <input type="radio" id="dmy"><label for="dmy">DD.MM.YYYY</label>
-            <input type="radio" id="mdy"><label for="mdy">MM/DD/YYYY</label>
+                <input type="radio" id="dmy"><label for="dmy">DD.MM.YYYY</label>
+                <input type="radio" id="mdy"><label for="mdy">MM/DD/YYYY</label>
             </div>
         </fieldset>
         <h3>Measurements</h3>
-        <fieldset class="cols">
+        <fieldset id="temperature" class="cols">
             <legend>Temperature: </legend>
-
-            <div><input type="radio" id="celsius"><label for="celsius">Celsius</label>
-                <input type="radio" id="fahrenheit"><label for="fahrenheit">Fahrenheit</label></div>
+            <div>
+                <input type="radio" id="celsius"><label for="celsius">Celsius</label>
+                <input type="radio" id="fahrenheit"><label for="fahrenheit">Fahrenheit</label>
+            </div>
         </fieldset>
-
-        <fieldset class="cols">
+        <fieldset id="pressure" class="cols">
             <legend>Pressure: </legend>
             <div><input type="radio" id="hpa"><label for="hpa">hPa</label>
                 <input type="radio" id="inhg"><label for="inhg">inHg</label></div>
         </fieldset>
-        <fieldset class="cols">
+        <fieldset id="distance" class="cols">
             <legend>Distance: </legend>
             <div><input type="radio" id="metric"><label for="metric">Metric</label>
                 <input type="radio" id="imperial"><label for="imperial">Imperial</label></div>

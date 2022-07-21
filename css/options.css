@@ -31,7 +31,9 @@
 #options-menu:not(.active) {
      display: none;
 }
-
+#language input {
+     display: none;
+}
 @media (max-width: 550px) {
      #options-menu {
           width: 100vw;
