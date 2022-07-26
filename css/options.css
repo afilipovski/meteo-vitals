@@ -6,6 +6,22 @@
      background: #444;
      color: white;
 }
+#buttonDiv {
+     margin: 5px 0;
+}
+/* Funkcijata renderbutton sozdava privremen div koj go
+sodrzi kopceto za logiranje, koj potoa go zamenuva so
+iframe. Bez ova svojstvo za moment se pojavuva pri loadiranje */
+#buttonDiv > div > div:first-child{
+     display: none;
+}
+#logoutDiv button {
+     margin : 5px 0;
+     padding : 2px;
+}
+#logoutDiv:not(.active), #buttonDiv:not(.active) {
+     display: none;
+}
 #options-menu .flag {
      height: 25px;
      padding: 5px;

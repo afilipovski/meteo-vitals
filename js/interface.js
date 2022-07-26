@@ -1,5 +1,10 @@
 //Aktivni na pocetok
 let actives = [];
+//Site odredeni kako aktivni vo htmlot da se evidentiraat
+Array.prototype.slice.call(document.getElementsByClassName('active')).forEach(element => {
+    actives.push(element.id);
+});
+
 //Parovi a:[b] elementi, ako se vkluci/iskluci a, se vklucuvaat/isklucuvaat site od b
 const dependencies = {
     'options-button' : ['options-menu']

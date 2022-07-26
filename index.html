@@ -20,7 +20,6 @@
         const printRequest = false;
     </script>
 
-    <script src="js/interface.js"></script>
     <script type="module" src="js/location.js"></script>
     <script src="js/options.js" defer></script>
 </head>
@@ -85,7 +84,14 @@
     </nav>
     <div id="options-menu">
         <h3>Sync</h3>
-        <p class="todo">To-do: Da se dodade google login kopce</p>
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
+            <div class="active" id="buttonDiv">
+                <!-- So skripta se popolnuva sodrzinata po vcituvanje na celata stranica -->
+            </div>
+            <div id="logoutDiv">
+                <p> <!--Logged in as:--> </p>
+                <button>Log out</button>
+            </div>
         <h3>Language & Time</h3>
         <fieldset id="language" class="cols">
             <legend>Language:</legend>
@@ -138,6 +144,7 @@
         <h1>Welcome to Meteo Vitals</h1>
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet aperiam architecto hic ratione soluta, vitae voluptatem? Aspernatur odio tenetur veritatis. Ab accusantium, consequatur dignissimos eaque expedita facilis maiores nihil unde.</p>
     </div>
+    <script src="js/interface.js"></script>
     <script type="module" src="js/firebase_output.js"></script>
 </body>
 </html>

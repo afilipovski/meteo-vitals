@@ -23,11 +23,6 @@ nav #logo {
 nav svg {
     padding: 15px 10px;
 }
-@media (min-width: 574px) {
-    nav svg:not(#logo):hover, nav .active {
-        background: #444;
-    }
-}
 
 nav #title {
     font-family: Inter, sans-serif;
@@ -90,6 +85,7 @@ nav input {
     padding: 5px 0;
     border-bottom: 1px solid black;
 }
+
 @media (max-width: 585px) {
     #nav-search {
         order: 3;
@@ -98,5 +94,10 @@ nav input {
     }
     #autocomplete li {
         padding: 15px 0;
+    }
+}
+@media (min-width: 586px) {
+    nav svg:not(#logo):hover, nav .active {
+        background: #444;
     }
 }
