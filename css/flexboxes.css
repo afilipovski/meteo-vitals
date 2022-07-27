@@ -1,4 +1,4 @@
-.cols, .left, .right {
+.cols, .left, .right, .center {
     display: flex;
     flex-flow: row wrap;
     align-items: center;
@@ -14,4 +14,7 @@
 }
 .right {
     justify-content: flex-end;
+}
+.center {
+    justify-content: center;
 }

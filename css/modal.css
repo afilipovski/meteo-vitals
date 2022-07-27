@@ -1,0 +1,31 @@
+#modal {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(100, 100, 100, 0.479);
+}
+#modal-inner {
+    max-width: min(300px, 90%);
+    margin: auto;
+    margin-top: min(200px,20vh);
+    background: #444;
+    padding: 20px;
+    color: white;
+    border-radius: 10px;
+}
+#modal-inner h3 {
+    text-align: center;
+    margin: 0;
+}
+#modal-inner p {
+    margin: 0.5rem 0;
+}
+#modal-inner .checkbox-container{
+    margin: 0.25rem 0;
+}
+#modal-inner button {
+    margin: 5px;
+    margin-bottom: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    height: 2rem;
+}
