@@ -7,11 +7,12 @@ function getCheckboxStates() {
     }
     return result;
 }
+
 function closeModal() {
     modalElement.remove();
 }
 
-function openModal(title, description, modalActions = [{type:"button", name:"OK", action:closeModal}], modalClasses = [], isVolatile = true, ) {
+function openModal(title, description, modalActions = [{type:"button", name:"OK", action:closeModal}], modalClasses = [], isVolatile = true ) {
     modalElement = document.createElement("div"); modalElement.id = 'modal';
     for (mc of modalClasses)
         modalElement.classList.add(mc);
@@ -54,4 +55,5 @@ function openModal(title, description, modalActions = [{type:"button", name:"OK"
         })
     }
 }
+
 openModal("title","text");

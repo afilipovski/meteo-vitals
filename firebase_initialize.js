@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithCredential, signOut } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -11,23 +12,23 @@ const firebaseConfig = {
   projectId: "meteo-vitals-a84cc",
   storageBucket: "meteo-vitals-a84cc.appspot.com",
   messagingSenderId: "329885935486",
-  appId: "1:329885935486:web:c8e4c5e494bb4b1d3ff52f"
+  appId: "1:329885935486:web:c8e4c5e494bb4b1d3ff52f",
+  databaseURL: "meteo-vitals-a84cc-default-rtdb.europe-west1.firebasedatabase.app"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+export const auth = getAuth();
+export const db = getDatabase(app);
 auth.useDeviceLanguage();
 
 // Pecati momentalen korisnik, za proverka na perzistentnost
 onAuthStateChanged(auth, user => {
   if (user) {
     document.getElementById('logoutDiv').firstElementChild.innerHTML = "Logged in as: " + user.displayName + " (" + user.email + ")"; 
-    deactivate('buttonDiv');
-    activate('logoutDiv');
+    deactivate('buttonDiv'); activate('logoutDiv');    
   } else {
-    activate('buttonDiv');
-    deactivate('logoutDiv');
+    activate('buttonDiv'); deactivate('logoutDiv');
   }
 });
 
@@ -62,4 +63,11 @@ window.onload = function () {
       logo_alignment: "left"
     }  // customization attributes
   );
+}
+
+export function setUserOptions(options) {
+  set(ref(db,'/users/' + user.uid + '/options'), options);
+}
+export function getUserOptions() {
+  
 }
