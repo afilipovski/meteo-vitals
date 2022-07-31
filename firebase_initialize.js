@@ -1,9 +1,7 @@
-// Import the functions you need from the SDKs you need
+// https://firebase.google.com/docs/web/setup#available-libraries
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithCredential, signOut } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database"
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { get, getDatabase, onValue, ref, set } from "firebase/database"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,20 +16,23 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth();
-export const db = getDatabase(app);
+const db = getDatabase(app);
+
+
+//AUTHENTICATION
+
+
+const auth = getAuth();
 auth.useDeviceLanguage();
 
-// Pecati momentalen korisnik, za proverka na perzistentnost
 onAuthStateChanged(auth, user => {
   if (user) {
     document.getElementById('logoutDiv').firstElementChild.innerHTML = "Logged in as: " + user.displayName + " (" + user.email + ")"; 
-    deactivate('buttonDiv'); activate('logoutDiv');    
+    deactivate('buttonDiv'); activate('logoutDiv');
   } else {
     activate('buttonDiv'); deactivate('logoutDiv');
   }
 });
-
 document.getElementById('logoutDiv').lastElementChild.onclick = (() => signOut(auth));
 
 function handleCredentialResponse(response) {
@@ -65,9 +66,60 @@ window.onload = function () {
   );
 }
 
-export function setUserOptions(options) {
-  set(ref(db,'/users/' + user.uid + '/options'), options);
+
+//OPTIONS
+
+
+{
+  //Zemanje na sekoj fieldset
+  let fieldsets = Array.from(document.getElementsByTagName('fieldset'));
+  //Za sekoj fieldset, se cita negoviot ID i se dodava kako opcija vo options
+  fieldsets.forEach(element => {
+      options[element.id] = [];
+      //Se dodavaat site inputi koi se del od fieldsetot kako alternativi, im se naznacuva onclick funkcija
+      Array.from(element.elements).forEach(alternative => {
+          alternative.onclick = function() {
+              updateSetting(element.id,alternative.id);
+          };
+          options[element.id].push(alternative.id);
+      });
+  })
 }
-export function getUserOptions() {
-  
+
+
+function updateSetting(setting, choice) {
+  if (debug) console.log(`${setting} set to ${choice}`);
+  optionsStored[setting] = choice;
+  //Ako sme avtenticirani, promenata se zacuvuva vo baza
+  if (auth.currentUser)
+    set(ref(db,`users/${auth.currentUser.uid}/options/${setting}`), choice);
+  //Vo sprotivno se zacuvuva vo lok.mem. - potrebno e da gi chekirame opciite bidejki onValue nema da bide povikana
+  else {
+    localStorage.setItem('options',JSON.stringify(optionsStored));
+    checkActive();
+  }
 }
+
+function checkActive() {
+  for(let x in options) {
+    for(let y of options[x])
+      document.getElementById(y).checked = (optionsStored[x] === y);
+  }
+}
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    const optionsRef = ref(db,`users/${user.uid}/options`);
+    onValue(optionsRef, (snapshot) => {
+      if(snapshot.exists()) { 
+        optionsStored = snapshot.val();
+        checkActive();
+      }
+      else { //ako nema vlez vo db za korisnikot
+        set(optionsRef,optionsStored);
+      }
+    })
+    
+  }
+})
+
