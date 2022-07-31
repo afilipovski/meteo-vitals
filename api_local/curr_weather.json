@@ -1,0 +1,43 @@
+{
+    "coord": {
+        "lon": 21.4,
+        "lat": 41.99
+    },
+    "weather": [
+        {
+            "id": 801,
+            "main": "Clouds",
+            "description": "неколку облаци",
+            "icon": "02d"
+        }
+    ],
+    "base": "stations",
+    "main": {
+        "temp": 29.69,
+        "feels_like": 29.04,
+        "temp_min": 29.69,
+        "temp_max": 29.69,
+        "pressure": 1012,
+        "humidity": 37
+    },
+    "visibility": 10000,
+    "wind": {
+        "speed": 6.17,
+        "deg": 10
+    },
+    "clouds": {
+        "all": 20
+    },
+    "dt": 1659279486,
+    "sys": {
+        "type": 1,
+        "id": 7023,
+        "country": "MK",
+        "sunrise": 1659237991,
+        "sunset": 1659290094
+    },
+    "timezone": 7200,
+    "id": 863860,
+    "name": "Општина Карпош",
+    "cod": 200
+}

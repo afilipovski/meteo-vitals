@@ -19,7 +19,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 
-//AUTHENTICATION
+//AVTENTIKACIJA
 
 
 const auth = getAuth();
@@ -67,7 +67,7 @@ window.onload = function () {
 }
 
 
-//OPTIONS
+//OPCII
 
 
 {
@@ -121,5 +121,8 @@ onAuthStateChanged(auth, (user) => {
     })
     
   }
+  else {
+    optionsStored = JSON.parse(localStorage.getItem('options'));
+    checkActive();
+  }
 })
-

@@ -23,8 +23,8 @@ iframe. Bez ova svojstvo za moment se pojavuva pri loadiranje */
      display: none;
 }
 #options-menu .flag {
-     height: 25px;
-     padding: 5px;
+     height: 15px;
+     margin: 5px;
 }
 #options-menu fieldset {
      border: 0;
@@ -49,6 +49,9 @@ iframe. Bez ova svojstvo za moment se pojavuva pri loadiranje */
 }
 #language input {
      display: none;
+}
+#language input:checked + label>.flag {
+     border: 1px solid gold;
 }
 @media (max-width: 550px) {
      #options-menu {

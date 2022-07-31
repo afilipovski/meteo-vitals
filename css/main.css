@@ -1,7 +1,19 @@
+body {
+    background: lightskyblue;
+}
 #main-content {
     max-width: min(90%, 900px);
     margin: auto;
+    
 }
-#main-content h1 {
+#main-content h1, #main-content h5 {
     text-align: center;
+}
+#main-content h5 {
+    margin-bottom: 0.25rem;
+}
+#weather-icon img {
+    display: block;
+    margin: auto;
+    width: 100px;
 }

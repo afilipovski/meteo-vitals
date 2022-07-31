@@ -18,11 +18,11 @@
         //500ms zastoj za URLRequest(), simulacija za asinhron tek na skriptata
         const simulateDelay = false;
         //pecatenje na URLRequest() baranja
-        const printRequest = false;
+        const printRequest = true;
     </script>
-
     <script type="module" src="js/location.js"></script>
     <script type="module" src="js/modal.js" defer></script>
+    <script type="module" src="js/weather.js"></script>
 </head>
 <body>
     <nav class="cols">
@@ -142,17 +142,12 @@
 
     </div>
     <div id="main-content">
-        <h1>Welcome to Meteo Vitals</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet aperiam architecto hic ratione soluta, vitae voluptatem? Aspernatur odio tenetur veritatis. Ab accusantium, consequatur dignissimos eaque expedita facilis maiores nihil unde.</p>
-    </div>
-    <!-- <div id="modal">
-        <div id="modal-content">
-            <h3>title</h3>
-            <p>text</p>
-            <input type="checkbox" id="dontask">
-            <label for="dontask">Don't ask again</label>
+        <h1>Skopje</h1>
+        <h5>31°C</h5>
+        <div id="weather-icon">
+            <img src="images/weather/few-clouds.svg" alt="">
         </div>
-    </div> -->
+    </div>
     <script src="js/interface.js"></script>
     <script type="module" src="js/options.js"></script>
     <script type="module" src="js/firebase_output.js"></script>
