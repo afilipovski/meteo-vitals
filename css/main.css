@@ -4,16 +4,84 @@ body {
 #main-content {
     max-width: min(90%, 900px);
     margin: auto;
-    
 }
-#main-content h1, #main-content h5 {
+.favorite-container {
+    max-width: 700px;
+    margin: auto;
+}
+.favorite-container>* {
+    margin-left:auto;
+    margin-right:auto;
+}
+.favorite-container h1, .favorite-container h5 {
     text-align: center;
 }
-#main-content h5 {
+.favorite-container h5 {
     margin-bottom: 0.25rem;
 }
-#weather-icon img {
+.current-weather {
+    min-width: 100px;
+    max-width: 300px;
+    flex-grow: 1;
+}
+.favorite-container .weather-icon {
     display: block;
     margin: auto;
     width: 100px;
+}
+.favorite-container .prhu-container {
+    margin-top: 25px;
+}
+.aqi-container {
+    margin-top: 10px;
+    background: greenyellow;
+    padding: 0.5rem 1rem;
+}
+.aqi-container, .hourly, .daily {
+    border-radius: 20px;
+}
+.forecast {
+    margin-top: 15px;
+}
+.hourly, .daily {
+    
+    border-radius: 20px;
+    max-width: 90vw;
+}
+.hourly {
+    padding: 5px 15px;
+    overflow-x: auto;
+}
+.favorite-container .name::-webkit-scrollbar,.hourly::-webkit-scrollbar {    
+    display: none;
+}
+.hourly>*:not(*:last-child){
+    margin-right: 10px;
+}
+.hourly h5 {
+    margin-top: 0;
+}
+.daily {
+    margin-top: 15px;
+    padding: 5px 10px;
+    width: 100%;
+}
+.daily, .hourly, .aqi-container {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.daily h5 {
+    margin: 0;
+}
+/* LOW I HIGH */
+.daily .right>h5:not(h5:last-child) { 
+    margin-right: 5px;
+}
+.daily>* {
+    padding: 5px 10px;
+}
+.daily>*:not(div:last-of-type) {
+    border-bottom: 1px solid white;
+}
+.current-weather {
+    padding : 0 10px;
 }

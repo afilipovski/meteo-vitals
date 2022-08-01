@@ -20,7 +20,7 @@ export function openModal(title, description, modalActions = [{type:"button", na
     const modalTitle = document.createElement("h3"); modalTitle.innerHTML = title; modalInner.append(modalTitle);
     const modalDescription = document.createElement("p"); modalDescription.innerHTML = description; modalInner.append(modalDescription);
     
-    for (cbx of modalActions) {
+    for (let cbx of modalActions) {
         if (cbx.type === "checkbox") {
             const modalCheckboxDiv = document.createElement("div");
             modalCheckboxDiv.classList.add("checkbox-container");
@@ -34,7 +34,7 @@ export function openModal(title, description, modalActions = [{type:"button", na
         }
     }
     const modalButtonDiv = document.createElement("div");
-    for (btn of modalActions) {
+    for (let btn of modalActions) {
         modalButtonDiv.classList.add("center");
         if (btn.type === "button") {
             const modalButton = document.createElement("button");

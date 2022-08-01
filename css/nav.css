@@ -36,7 +36,6 @@ nav input {
 }
 #nav-search {
     padding: 0 10px;
-    min-width: 100px;
     flex: 1 1 100px;
     max-width: 300px;
     position: relative;
@@ -48,7 +47,7 @@ nav input {
     flex: 0 0;
 }
 #nav-search input {
-
+    min-width: 100px;
     padding-left: 7px;
     flex-grow: 4;
     flex-shrink: 4;
@@ -99,5 +98,14 @@ nav input {
 @media (min-width: 586px) {
     nav svg:not(#logo):hover, nav .active {
         background: #444;
+    }
+}
+@media (min-width: 760px) {
+    #nav-search {
+        position: absolute;
+        margin: auto;
+        left: 0;
+        right: 0;
+        width: 300px;
     }
 }

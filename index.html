@@ -132,21 +132,107 @@
             <div><input type="radio" id="hpa"><label for="hpa">hPa</label>
                 <input type="radio" id="inhg"><label for="inhg">inHg</label></div>
         </fieldset>
-        <fieldset id="distance" class="cols">
-            <legend>Distance: </legend>
-            <div><input type="radio" id="metric"><label for="metric">Metric</label>
-                <input type="radio" id="imperial"><label for="imperial">Imperial</label></div>
-        </fieldset>
 
         <h3>View</h3>
 
     </div>
     <div id="main-content">
-        <h1>Skopje</h1>
-        <h5>31°C</h5>
-        <div id="weather-icon">
-            <img src="images/weather/few-clouds.svg" alt="">
+        <div class="favorite-container cols">
+            <div class="current-weather">
+                <h1 class="name">ABCDEFGHIJKLMNOPQRS</h1>
+                <h5 class="temperature">31°C | Feels like 29°C</h5>
+                <img class="weather-icon" src="images/weather/few-clouds.svg" alt="">
+                <h5 class="weather-description">Partly cloudy</h5>
+                <div class="prhu-container cols">
+                    <span class="pressure">Pressure: 1000hpa</span>
+                    <span class="humidity">Humidity: 30%</span>
+                </div>
+                <div class="aqi-container cols">
+                    <span>AQI</span>
+                    <span class="aqi">2 (good)</span>
+                </div>
+            </div>
+            <div class="forecast up">
+                <div class="hourly left nowrap">
+                    <div>
+                        <img src="images/weather/clear.svg" alt="">
+                        <h5>31°C</h5>
+                        <h5>13:00</h5>
+                    </div>
+                    <div>
+                        <img src="images/weather/clear.svg" alt="">
+                        <h5>31°C</h5>
+                        <h5>13:00</h5>
+                    </div>
+                    <div>
+                        <img src="images/weather/clear.svg" alt="">
+                        <h5>31°C</h5>
+                        <h5>13:00</h5>
+                    </div>
+                    <div>
+                        <img src="images/weather/clear.svg" alt="">
+                        <h5>31°C</h5>
+                        <h5>13:00</h5>
+                    </div>
+                    <div>
+                        <img src="images/weather/clear.svg" alt="">
+                        <h5>31°C</h5>
+                        <h5>13:00</h5>
+                    </div>
+                    <div>
+                        <img src="images/weather/clear.svg" alt="">
+                        <h5>31°C</h5>
+                        <h5>13:00</h5>
+                    </div>
+                    <div>
+                        <img src="images/weather/clear.svg" alt="">
+                        <h5>31°C</h5>
+                        <h5>13:00</h5>
+                    </div>
+                    <div>
+                        <img src="images/weather/clear.svg" alt="">
+                        <h5>31°C</h5>
+                        <h5>13:00</h5>
+                    </div>
+                </div>
+                <div class="daily">
+                    <div class="cols">
+                        <h5>Утре</h5>
+                        <div class="right">
+                            <h5>17°C</h5>
+                            <h5>|</h5>
+                            <h5>30°C</h5>
+                        </div>
+                    </div>
+                    <div class="cols">
+                        <h5>Утре</h5>
+                        <div class="right">
+                            <h5>17°C</h5>
+                            <h5>|</h5>
+                            <h5>30°C</h5>
+                        </div>
+                    </div>
+                    <div class="cols">
+                        <h5>Утре</h5>
+                        <div class="right">
+                            <h5>17°C</h5>
+                            <h5>|</h5>
+                            <h5>30°C</h5>
+                        </div>
+                    </div>
+                    <div class="cols">
+                        <h5>Утре</h5>
+                        <div class="right">
+                            <h5>17°C</h5>
+                            <h5>|</h5>
+                            <h5>30°C</h5>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
         </div>
+        <h2 style="background: red;">OTHER CONTENT</h2>
     </div>
     <script src="js/interface.js"></script>
     <script type="module" src="js/options.js"></script>

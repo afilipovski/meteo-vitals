@@ -1,3 +1,5 @@
+/* HORIZONTALNI */
+
 .cols, .left, .right, .center {
     display: flex;
     flex-flow: row wrap;
@@ -16,5 +18,22 @@
     justify-content: flex-end;
 }
 .center {
+    justify-content: center;
+}
+
+/* VERTIKALNI */
+
+.up, .down, .vcenter {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+}
+.up {
+    justify-content: flex-start;
+}
+.down {
+    justify-content: flex-end;
+}
+.vcenter {
     justify-content: center;
 }
