@@ -13,7 +13,10 @@ body {
     margin-left:auto;
     margin-right:auto;
 }
-.favorite-container h1, .favorite-container h5 {
+.name {
+    overflow-x: auto;
+}
+.favorite-container h1, .favorite-container h4, .favorite-container h5 {
     text-align: center;
 }
 .favorite-container h5 {
@@ -22,15 +25,21 @@ body {
 .current-weather {
     min-width: 100px;
     max-width: 300px;
-    flex-grow: 1;
 }
 .favorite-container .weather-icon {
     display: block;
     margin: auto;
     width: 100px;
 }
-.favorite-container .prhu-container {
-    margin-top: 25px;
+.prhu-container, .aqi-container {
+    max-width: min(90vw, 300px);
+    margin: auto;
+}
+.prhu-container span {
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 10px;
 }
 .aqi-container {
     margin-top: 10px;
@@ -52,7 +61,7 @@ body {
     padding: 5px 15px;
     overflow-x: auto;
 }
-.favorite-container .name::-webkit-scrollbar,.hourly::-webkit-scrollbar {    
+.name::-webkit-scrollbar,.hourly::-webkit-scrollbar {    
     display: none;
 }
 .hourly>*:not(*:last-child){
@@ -62,9 +71,16 @@ body {
     margin-top: 0;
 }
 .daily {
+    position: relative;
     margin-top: 15px;
     padding: 5px 10px;
     width: 100%;
+}
+.daily img {
+    height: 26px;
+    position: absolute;
+    left: 0;
+    margin-left: 40%;
 }
 .daily, .hourly, .aqi-container {
     background-color: rgba(255, 255, 255, 0.5);
@@ -84,4 +100,45 @@ body {
 }
 .current-weather {
     padding : 0 10px;
+}
+
+@media (max-width: 746px) {
+    .current-weather {
+        max-width: 90vw;
+        padding: 0;
+    }
+}
+@media (max-width: 310px) {
+    .current-weather .name {
+        font-size: 1.5rem;
+    }
+}
+
+/* CARDS */
+
+.other-pinned {
+    margin-top: 30px;
+}
+.card .weather-icon {
+    height: 60px;
+}
+.card .name {
+    text-align: center;
+}
+.card h5, .card h3 {
+    margin: 0.5rem 0;
+}
+.card {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0.25rem 1.5rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 90vw;
+    margin: 5px;
+}
+.card > * {
+    margin: auto;
+}
+.card>div:first-of-type {
+    max-width: 90%;
 }

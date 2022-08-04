@@ -84,6 +84,9 @@ nav input {
     padding: 5px 0;
     border-bottom: 1px solid black;
 }
+#autocomplete, #options-menu {
+    z-index: 100;
+}
 
 @media (max-width: 585px) {
     #nav-search {

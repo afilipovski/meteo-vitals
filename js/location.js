@@ -1,8 +1,8 @@
 import {URLRequest} from './api_utils.js'
 
-window.locate = {remote, browser}; //locate.remote() dava ip-lokacija, locate.browser() dava gps-lokacija
+//window.locate = {remote, browser}; //locate.remote() dava ip-lokacija, locate.browser() dava gps-lokacija
 
-async function remote() {
+export async function remote() {
     //"Keshirana" ip-lokacija, za da se izbegnat nepotrebni povici kon API-to
     let locationStored = JSON.parse(sessionStorage.getItem('iplocation'));
     if (locationStored)
@@ -23,7 +23,7 @@ async function remote() {
         console.log(err);
     }
 }
-async function browser() {
+export async function browser() {
     return new Promise((resolve) => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {

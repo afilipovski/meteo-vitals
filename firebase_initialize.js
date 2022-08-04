@@ -126,3 +126,76 @@ onAuthStateChanged(auth, (user) => {
     checkActive();
   }
 })
+
+
+//VREME
+
+import { browser, remote } from "./js/location.js"
+import { getCurrentWeather, getAllWeather } from "./js/weather.js"
+
+let placesStored;
+
+//INTERFEJS NA PLACESSTORED
+function setFav(id) {
+  if (placesStored.fav !== id) {
+    filterCard(id);
+    placesStored.fav = id;
+  }
+}
+function pushCard(id) {
+  if(!placesStored.others.includes(id)) {
+    placesStored.others.push(id);
+  }
+}
+function filterCard(id) {
+  if (placesStored.others.includes(id)) {
+    placesStored.others = placesStored.others.filter(x => x !== id);
+  }
+}
+
+//Inicijalizacija
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    const placesRef = ref(db,`users/${user.uid}/places`);
+    onValue(placesRef, (snapshot) => {
+      if(snapshot.exists()) {
+        placesStored = snapshot.val();
+      }
+      else {
+        updatePlaces();
+      }
+    })
+  }
+  else {
+    placesStored = JSON.parse(localStorage.getItem('places'));
+    if (!placesStored) {
+      remote().then(location => {
+        getAllWeather(location).then(weas => {
+          placesStored = {
+            fav: weas.statics.id,
+            others: []
+          }
+          localStorage.setItem('places',JSON.stringify(placesStored));
+          updateWeather(weas);
+        });
+      })
+    }
+  }
+})
+
+//Generiraj podatok vo baza
+function updateWeather(weas) {
+  get(ref(db,`weatherCache/${weas.statics.id}`)).then(snapshot => {
+    if (!snapshot.exists() && weas.hasOwnProperty('currentWeather') && weas.hasOwnProperty('forecast')) {
+      set(ref(db,`weatherCache/${weas.statics.id}/statics`),weas.statics);
+    }
+    if (weas.hasOwnProperty('currentWeather'))
+      set(ref(db,`weatherCache/${weas.statics.id}/currentWeather`),weas.currentWeather);
+    if (weas.hasOwnProperty('forecast'))
+      set(ref(db,`weatherCache/${weas.statics.id}/forecast`),weas.forecast);
+    if (weas.hasOwnProperty('pollution'))
+      set(ref(db,`weatherCache/${weas.statics.id}/pollution`),weas.pollution);
+  })
+}
+
+document.getElementsByClassName('favorite-container')[0].id = placesStored

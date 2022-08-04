@@ -1,6 +1,6 @@
 import { URLRequest } from "./api_utils.js"
 
-async function getCurrentWeather({latitude : lat, longitude : lon}) {
+export async function getCurrentWeather({latitude : lat, longitude : lon}) {
     let raw = await URLRequest(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f&units=metric&lang=mk`);
     return {
         statics: {
@@ -25,7 +25,7 @@ async function getCurrentWeather({latitude : lat, longitude : lon}) {
     }
 }
 
-async function getForecast({latitude : lat, longitude : lon}) {
+export async function getForecast({latitude : lat, longitude : lon}) {
     let raw = await URLRequest(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f&units=metric`);
     return {
         statics : {
@@ -84,7 +84,7 @@ async function getForecast({latitude : lat, longitude : lon}) {
     }
 }
 
-async function getPollution({latitude : lat, longitude : lon}) {
+export async function getPollution({latitude : lat, longitude : lon}) {
     let raw = await URLRequest(`http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f`);
     return {
         data: {
@@ -94,7 +94,7 @@ async function getPollution({latitude : lat, longitude : lon}) {
     }
 }
 
-async function getAllWeather(location) {
+export async function getAllWeather(location) {
     let vals = await Promise.all([getCurrentWeather(location),getForecast(location),getPollution(location)]);
     return {
         statics: {...vals[0]["statics"], ...vals[1]["statics"]}, 

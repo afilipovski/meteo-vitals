@@ -1,3 +1,6 @@
+import { remote } from "./location.js"
+import { getCurrentWeather } from "./weather.js"
+
 window.options = {};
 window.optionsStored = JSON.parse(localStorage.getItem('options'));
 
@@ -8,7 +11,7 @@ if (!optionsStored) {
 }
 
 export async function getDefaults() {
-    const {countryCode : cc} = await locate.remote(); //Zemanje country code od ip lokacija
+    const {countryCode : cc} = await remote(); //Zemanje country code od ip lokacija
     return {
         dates : ['US','PH','MY','SO','TG','PA','PR','KY','GL'].includes(cc) ? 'mdy' : 'dmy',
         distance : ['LR','MM','UK','US'].includes(cc) ? 'imperial' : 'metric',
