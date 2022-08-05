@@ -98,7 +98,7 @@ export async function getForecast({latitude : lat, longitude : lon}) {
     if (localAPICalls)
         var raw = await URLRequest(`../api_local/forecast.json`);
     else
-        var raw = await URLRequest(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f&units=metric`);
+        var raw = await URLRequest(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f&units=metric`);
     
     return {
         statics : {
@@ -165,7 +165,7 @@ export async function getPollution({latitude : lat, longitude : lon}) {
     if (localAPICalls)
         var raw = await URLRequest(`../api_local/pollution.json`);
     else
-        var raw = await URLRequest(`http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f`);
+        var raw = await URLRequest(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f`);
     
     return {
         data: {
