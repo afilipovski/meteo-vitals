@@ -19,10 +19,11 @@
         const simulateDelay = false;
         //pecatenje na URLRequest() baranja
         const printRequest = true;
+        //lokalni api povici
+        const localAPICalls = false;
     </script>
     <script type="module" src="js/location.js"></script>
     <script type="module" src="js/modal.js" defer></script>
-    <script type="module" src="js/weather.js"></script>
 </head>
 <body>
     <nav class="cols">
@@ -59,9 +60,9 @@
             <h2 id="title">Meteo Vitals</h2>
         </div>
         <div id="nav-search" class="cols nowrap">
-            <img src="images/Linecons_location-gps.svg" alt="">
+            <img src="images/Linecons_location-gps.svg">
             <input id="search-input" type="text" placeholder="Search..." onclick="activate('autocomplete')">
-            <img src="images/Magnifying_glass_icon.svg" alt="">
+            <img src="images/Magnifying_glass_icon.svg">
             <ul id="autocomplete">
                 <li>Skopje, MK</li>
                 <li>Tetovo, MK</li>
@@ -123,8 +124,8 @@
         <fieldset id="temperature" class="cols">
             <legend>Temperature: </legend>
             <div>
-                <input type="radio" id="celsius"><label for="celsius">Celsius</label>
-                <input type="radio" id="fahrenheit"><label for="fahrenheit">Fahrenheit</label>
+                <input type="radio" id="celsius"><label for="celsius">°C</label>
+                <input type="radio" id="fahrenheit"><label for="fahrenheit">°F</label>
             </div>
         </fieldset>
         <fieldset id="pressure" class="cols">
@@ -139,159 +140,110 @@
     <div id="main-content">
         <div class="favorite-container cols">
             <div class="current-weather">
-                <h1 class="name">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
-                <h4 class="temperature">31°C | Feels like 29°C</h4>
-                <img class="weather-icon" src="images/weather/few-clouds.svg" alt="">
-                <h5 class="weather-description">Partly cloudy</h5>
+                <h1 class="name"></h1>
+                <h4><span class="temperature"></span> | <span class="feels-like-text"></span><span class="feels-like"></span></h4>
+                <img class="weather-icon">
+                <h5 class="weather-description"></h5>
                 <div class="prhu-container cols">
-                    <span class="pressure">Pressure: 1000hpa</span>
-                    <span class="humidity">Humidity: 30%</span>
+                    <span><span class="pressure-text"></span><span class="pressure"></span></span>
+                    <span><span class="humidity-text"></span><span class="humidity"></span></span>
                 </div>
                 <div class="aqi-container cols">
                     <span>AQI</span>
-                    <span class="aqi">2 (good)</span>
+                    <span class="aqi"></span>
                 </div>
             </div>
             <div class="forecast up">
                 <div class="hourly left nowrap">
                     <div>
-                        <img src="images/weather/clear.svg" alt="">
-                        <h5>31°C</h5>
-                        <h5>13:00</h5>
+                        <img src="">
+                        <h5></h5>
+                        <h5></h5>
                     </div>
                     <div>
-                        <img src="images/weather/clear.svg" alt="">
-                        <h5>31°C</h5>
-                        <h5>13:00</h5>
+                        <img src="">
+                        <h5></h5>
+                        <h5></h5>
                     </div>
                     <div>
-                        <img src="images/weather/clear.svg" alt="">
-                        <h5>31°C</h5>
-                        <h5>13:00</h5>
+                        <img src="">
+                        <h5></h5>
+                        <h5></h5>
                     </div>
                     <div>
-                        <img src="images/weather/clear.svg" alt="">
-                        <h5>31°C</h5>
-                        <h5>13:00</h5>
+                        <img src="">
+                        <h5></h5>
+                        <h5></h5>
                     </div>
                     <div>
-                        <img src="images/weather/clear.svg" alt="">
-                        <h5>31°C</h5>
-                        <h5>13:00</h5>
+                        <img src="">
+                        <h5></h5>
+                        <h5></h5>
                     </div>
                     <div>
-                        <img src="images/weather/clear.svg" alt="">
-                        <h5>31°C</h5>
-                        <h5>13:00</h5>
+                        <img src="">
+                        <h5></h5>
+                        <h5></h5>
                     </div>
                     <div>
-                        <img src="images/weather/clear.svg" alt="">
-                        <h5>31°C</h5>
-                        <h5>13:00</h5>
+                        <img src="">
+                        <h5></h5>
+                        <h5></h5>
                     </div>
                     <div>
-                        <img src="images/weather/clear.svg" alt="">
-                        <h5>31°C</h5>
-                        <h5>13:00</h5>
+                        <img src="">
+                        <h5></h5>
+                        <h5></h5>
                     </div>
                 </div>
                 <div class="daily">
                     <div class="cols">
-                        <img src="images/weather/few-clouds.svg" alt="">
-                        <h5>Утре</h5>
+                        <img src="">
+                        <h5 class="date"></h5>
                         <div class="right">
-                            <h5>17°C</h5>
+                            <h5 class="low"></h5>
                             <h5>|</h5>
-                            <h5>30°C</h5>
+                            <h5 class="high"></h5>
                         </div>
                     </div>
                     <div class="cols">
-                        <img src="images/weather/few-clouds.svg" alt="">
-                        <h5>Утре</h5>
+                        <img src="">
+                        <h5 class="date"></h5>
                         <div class="right">
-                            <h5>17°C</h5>
+                            <h5 class="low"></h5>
                             <h5>|</h5>
-                            <h5>30°C</h5>
+                            <h5 class="high"></h5>
                         </div>
                     </div>
                     <div class="cols">
-                        <img src="images/weather/few-clouds.svg" alt="">
-                        <h5>Утре</h5>
+                        <img src="">
+                        <h5 class="date"></h5>
                         <div class="right">
-                            <h5>17°C</h5>
+                            <h5 class="low"></h5>
                             <h5>|</h5>
-                            <h5>30°C</h5>
+                            <h5 class="high"></h5>
                         </div>
                     </div>
                     <div class="cols">
-                        <img src="images/weather/few-clouds.svg" alt="">
-                        <h5>Утре</h5>
+                        <img src="">
+                        <h5 class="date"></h5>
                         <div class="right">
-                            <h5>17°C</h5>
+                            <h5 class="low"></h5>
                             <h5>|</h5>
-                            <h5>30°C</h5>
+                            <h5 class="high"></h5>
                         </div>
                     </div>
                     
                 </div>
             </div>
         </div>
-        <div class="other-pinned center">
-            <div class="card cols">
-                <div>
-                    <h2 class="name">Skopje</h2>
-                    <p>Pressure: <span>1000hpa</span></p>
-                    <p>Humidity: <span>30%</span></p>
-                </div> 
-                <div>
-                    <img src="/images/weather/clear.svg" class="weather-icon">
-                    <h3>31°C</h3>
-                    <h5>Feels like <span>31°C</span></h5>
-                </div>
-                           
-            </div>
-            <div class="card cols">
-                <div>
-                    <h2 class="name">Skopje</h2>
-                    <p>Pressure: <span>1000hpa</span></p>
-                    <p>Humidity: <span>30%</span></p>
-                </div> 
-                <div>
-                    <img src="/images/weather/clear.svg" class="weather-icon">
-                    <h3>31°C</h3>
-                    <h5>Feels like <span>31°C</span></h5>
-                </div>      
-            </div>
-            <div class="card cols">
-                <div>
-                    <h2 class="name">Skopje</h2>
-                    <p>Pressure: <span>1000hpa</span></p>
-                    <p>Humidity: <span>30%</span></p>
-                </div> 
-                <div>
-                    <img src="/images/weather/clear.svg" class="weather-icon">
-                    <h3>31°C</h3>
-                    <h5>Feels like <span>31°C</span></h5>
-                </div>
-                           
-            </div>
-            <div class="card cols">
-                <div>
-                    <h2 class="name">Skopje</h2>
-                    <p>Pressure: <span>1000hpa</span></p>
-                    <p>Humidity: <span>30%</span></p>
-                </div> 
-                <div>
-                    <img src="/images/weather/clear.svg" class="weather-icon">
-                    <h3>31°C</h3>
-                    <h5>Feels like <span>31°C</span></h5>
-                </div>
-                           
-            </div>
+        <div id="other-pinned" class="center">                           
         </div>
     </div>
     <script src="js/interface.js"></script>
     <script type="module" src="js/options.js"></script>
+    <script type="module" src="js/weather.js"></script>
+    <script type="module" src="js/localisation.js"></script>
     <script type="module" src="js/firebase_output.js"></script>
 </body>
 </html>

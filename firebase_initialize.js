@@ -131,7 +131,7 @@ onAuthStateChanged(auth, (user) => {
 //VREME
 
 import { browser, remote } from "./js/location.js"
-import { getCurrentWeather, getAllWeather } from "./js/weather.js"
+import { getCurrentWeather, getAllWeather, fillElement, createCard } from "./js/weather.js"
 
 let placesStored;
 
@@ -183,7 +183,7 @@ onAuthStateChanged(auth, (user) => {
   }
 })
 
-//Generiraj podatok vo baza
+//Generiraj/azhuriraj podatok vo baza
 function updateWeather(weas) {
   get(ref(db,`weatherCache/${weas.statics.id}`)).then(snapshot => {
     if (!snapshot.exists() && weas.hasOwnProperty('currentWeather') && weas.hasOwnProperty('forecast')) {
@@ -198,4 +198,9 @@ function updateWeather(weas) {
   })
 }
 
-document.getElementsByClassName('favorite-container')[0].id = placesStored
+const newCard = createCard(); newCard.id = 'troll';
+document.getElementById('other-pinned').append(newCard);
+remote().then(location => getAllWeather(location)).then(weas => {
+  fillElement(newCard,weas);
+  fillElement(document.getElementsByClassName('favorite-container')[0],weas);
+})
