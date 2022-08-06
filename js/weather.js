@@ -28,11 +28,14 @@ export function createCard() {
     return card;
 }
 
-function getIconURL(icon) {
-    return `http://openweathermap.org/img/wn/${icon}@2x.png`;
-}
+function getIconURL(icon) {return `https://openweathermap.org/img/wn/${icon}@2x.png`}
 
 export function fillElement(element, weas) {
+
+    if(debug)
+        console.log("SPREAD OPERATOR TEST:\n",weas);
+
+
     element.id = weas.statics.id;
     element.querySelector('.name').innerHTML = ll.getLocalisedPlaceName(weas);
     element.querySelector('.temperature').innerHTML = ll.getLocalisedTemperature(weas.currentWeather.temp);
@@ -44,7 +47,7 @@ export function fillElement(element, weas) {
     element.querySelector('.humidity').innerHTML = weas.currentWeather.humidity+"%";
     element.querySelector('.weather-icon').src = getIconURL(weas.currentWeather.icon);
     if (element.querySelector('.aqi')) {
-        element.querySelector('.aqi').innerHTML = weas.pollution.aqi;
+        element.querySelector('.aqi').innerHTML = weas.pollution;
     }
     if (element.querySelector('.forecast')) {
         const hourlyArr = element.querySelector('.hourly').querySelectorAll('div');
@@ -61,9 +64,22 @@ export function fillElement(element, weas) {
             dailyArr[i].querySelector('.high').innerHTML = ll.getLocalisedTemperature(weas['forecast']['dailyForecast'][i]['high']);
         }
     }
-
 }
 
+export function unixHours(ut) {
+    const date = new Date(ut*1000);
+    return date.getUTCHours();
+}
+export function unixDate(ut) {
+    const date = new Date(ut * 1000);
+    return {
+        day : date.getUTCDate(),
+        month : date.getUTCMonth() + 1,
+        year : date.getUTCFullYear()
+    }
+}
+
+//(1) se povikuva za azuriranje na objekt vreme
 export async function getCurrentWeather({latitude : lat, longitude : lon}) {
     if (localAPICalls)
         var raw = await URLRequest(`../api_local/curr_weather.json`);
@@ -71,13 +87,8 @@ export async function getCurrentWeather({latitude : lat, longitude : lon}) {
         var raw = await URLRequest(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f&units=metric&lang=mk`);
     
     return {
-        statics: {
-            lat : raw["coord"]["lat"],
-            lon : raw["coord"]["lon"],
-            id : raw["id"],
-            nameMK : raw["name"]
-        },
-        data : {
+        nameMK : raw["name"],
+        currentWeather : {
             dt : raw["dt"], //vreme na povikot
             id : raw["weather"][0]["id"],
             icon: raw["weather"][0]["icon"],
@@ -94,36 +105,41 @@ export async function getCurrentWeather({latitude : lat, longitude : lon}) {
     }
 }
 
+//(1) se povikuva za azuriranje na prognoza
 export async function getForecast({latitude : lat, longitude : lon}) {
     if (localAPICalls)
         var raw = await URLRequest(`../api_local/forecast.json`);
     else
         var raw = await URLRequest(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f&units=metric`);
     
+    //KORISNI PROMENLIVI
+    const timezone = raw['city']['timezone'];
+
     return {
-        statics : {
-            nameEN : raw["city"]["name"]
-        },
-        data : {
+        nameEN : raw["city"]["name"],
+        forecast : {
             dt : raw["list"][0]["dt"],
             hourlyForecast : (() => {
                 let res = [];
-                for (let i=1; i<=8; i++)
+                for (let i=0; i<8; i++)
                     res.push({
                         temp : raw["list"][i]["main"]["temp_min"],
-                        hour : raw["list"][i]["dt_txt"].slice(11,13),
+                        hour : unixHours(raw["list"][i]["dt"] + raw["city"]["timezone"]),
                         icon : raw["list"][i]["weather"][0]["icon"]
                     });
                 return res;
             })(),
             dailyForecast : (() => {
-                let i=0;
-                while(raw["list"][i]["dt_txt"].slice(11,13) !== "00" && i<40) i++;
+                let i=1;
+                const dateOfIndex = (index) => {
+                    return unixDate(raw["list"][index]["dt"] + raw["city"]["timezone"]);
+                }
+                while(dateOfIndex(i-1).day === dateOfIndex(i).day && i<40) i++;
                 let res = [];
                 let minTemp, maxTemp;
                 let counts = {};
                 while(i<40) {
-                    if (raw["list"][i]["dt_txt"].slice(11,13) === "00") {
+                    if (dateOfIndex(i-1).day !== dateOfIndex(i).day) {
                         if (typeof minTemp !== 'undefined') { //Za da se izbegne push na prazni podatoci
                             let maxIcon;
                             for (let x in counts) {
@@ -135,7 +151,7 @@ export async function getForecast({latitude : lat, longitude : lon}) {
                             res.push({
                                 low : minTemp,
                                 high : maxTemp,
-                                date : raw["list"][i-1]["dt_txt"].slice(0,10),
+                                date : dateOfIndex(i-1), //DA SE ADJUSTNE ZA VREMENSKA ZONA
                                 icon : maxIcon
                             });
                         }
@@ -161,6 +177,7 @@ export async function getForecast({latitude : lat, longitude : lon}) {
     }
 }
 
+//(1) se povikuva za azuriranje na aerozagaduvanje
 export async function getPollution({latitude : lat, longitude : lon}) {
     if (localAPICalls)
         var raw = await URLRequest(`../api_local/pollution.json`);
@@ -168,34 +185,31 @@ export async function getPollution({latitude : lat, longitude : lon}) {
         var raw = await URLRequest(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f`);
     
     return {
-        data: {
-            dt : raw["list"][0]["dt"],
-            aqi : raw["list"][0]["main"]["aqi"]
-        }
+        pollution : raw["list"][0]["main"]["aqi"]
     }
 }
 
-export async function getAllWeather(location) {
-    let vals = await Promise.all([getCurrentWeather(location),getForecast(location),getPollution(location)]);
+export async function geolocate(name) {
+    if (!localAPICalls)
+        var raw = await URLRequest(`https://api.openweathermap.org/geo/1.0/direct?q="${name}"&limit=1&appid=d8924a5f87ce36dea6afc7dddbd53f1f`);
+    else
+        var raw = await URLRequest("../api_local/geolocation.json");
     return {
-        statics: {...vals[0]["statics"], ...vals[1]["statics"]}, 
-        currentWeather: vals[0]["data"],
-        forecast: vals[1]["data"],
-        pollution: vals[2]["data"]
+        nameEN: raw[0]['local_names']['en'],
+        nameMK: raw[0]['local_names']['mk'] || raw[0]['local_names']['en'],
+        latitude : raw[0]['lat'],
+        longitude : raw[0]['lon']
     }
 }
 
-import { openModal, closeModal } from "./modal.js"
+export function locToId({latitude : lat, longitude : lon}) {
+    return lat.toString() + ',' + lon.toString();
+}
 
-// openModal("get weather?", "3 api calls", [
-//         {
-//             type: "button", 
-//             name: "yes", 
-//             action: (() => {
-//                 locate.remote().then((val) => getAllWeather(val).then((v2) => console.log(v2)));
-//                 closeModal();
-//             })
-//         }
-//     ]
-// );
-
+export function idToLoc(id) {
+    id = id.split(',');
+    return {
+        latitude: id[0],
+        longitude: id[1]
+    }
+}

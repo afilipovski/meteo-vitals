@@ -38,6 +38,7 @@ const mk = {
 export function getLocalisedText(id) {
     return (optionsStored['language'] === 'macedonian') ? mk[id] : en[id];
 }
+//DA SE POPRAVI
 export function getLocalisedPlaceName(weas) {
     return (optionsStored['language'] === 'macedonian') ? weas['statics']['nameMK'] : weas['statics']['nameEN'];
 }
@@ -49,8 +50,7 @@ export function getLocalisedTime(time) {
     else
         return time+" PM";
 }
-export function getLocalisedDate(date) {
-    var [year,month,day] = date.split("-");
+export function getLocalisedDate({year : year, month : month, day : day}) {
     if (optionsStored['dates'] === 'dmy')
         return `${day}.${month}.${year}`;
     else

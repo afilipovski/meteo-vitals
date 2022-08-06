@@ -96,7 +96,7 @@ function updateSetting(setting, choice) {
   //Vo sprotivno se zacuvuva vo lok.mem. - potrebno e da gi chekirame opciite bidejki onValue nema da bide povikana
   else {
     localStorage.setItem('options',JSON.stringify(optionsStored));
-    checkActive();
+    onOptionsStoredChange();
   }
 }
 
@@ -113,7 +113,7 @@ onAuthStateChanged(auth, (user) => {
     onValue(optionsRef, (snapshot) => {
       if(snapshot.exists()) { 
         optionsStored = snapshot.val();
-        checkActive();
+        onOptionsStoredChange(); //callback
       }
       else { //ako nema vlez vo db za korisnikot
         set(optionsRef,optionsStored);
@@ -123,15 +123,21 @@ onAuthStateChanged(auth, (user) => {
   }
   else {
     optionsStored = JSON.parse(localStorage.getItem('options'));
-    checkActive();
+    onOptionsStoredChange();
   }
 })
 
 
+//PO SEKOJA PROMENA NA OPTIONSSTORED, SE POVIKUVA OVAA FUNKCIJA
+//Se povikuva samo vo slucai kade korisnikot ne e logiran - bidejki dokolku e, e povikana od onValue
+function onOptionsStoredChange() {
+  checkActive();
+}
+
 //VREME
 
 import { browser, remote } from "./js/location.js"
-import { getCurrentWeather, getAllWeather, fillElement, createCard } from "./js/weather.js"
+import * as w from "./js/weather.js"
 
 let placesStored;
 
@@ -150,6 +156,7 @@ function pushCard(id) {
 function filterCard(id) {
   if (placesStored.others.includes(id)) {
     placesStored.others = placesStored.others.filter(x => x !== id);
+    document.getElementById(id).remove();
   }
 }
 
@@ -157,50 +164,125 @@ function filterCard(id) {
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const placesRef = ref(db,`users/${user.uid}/places`);
+    
+    get(placesRef).then(snapshot => {
+      initialisePlaces();
+    }).catch(() => set(placesRef,placesStored));
+
     onValue(placesRef, (snapshot) => {
       if(snapshot.exists()) {
         placesStored = snapshot.val();
       }
       else {
-        updatePlaces();
+        set(placesRef,placesStored);
       }
     })
   }
   else {
     placesStored = JSON.parse(localStorage.getItem('places'));
     if (!placesStored) {
-      remote().then(location => {
-        getAllWeather(location).then(weas => {
-          placesStored = {
-            fav: weas.statics.id,
-            others: []
-          }
-          localStorage.setItem('places',JSON.stringify(placesStored));
-          updateWeather(weas);
-        });
+      generatePlacesEntry().then(() => {
+        placesStored = {
+          fav: {...localStaticsCache},
+          others: []
+        }
+
+        console.log(placesStored);
       })
     }
+    else
+      initialisePlaces();
   }
 })
 
-//Generiraj/azhuriraj podatok vo baza
-function updateWeather(weas) {
-  get(ref(db,`weatherCache/${weas.statics.id}`)).then(snapshot => {
-    if (!snapshot.exists() && weas.hasOwnProperty('currentWeather') && weas.hasOwnProperty('forecast')) {
-      set(ref(db,`weatherCache/${weas.statics.id}/statics`),weas.statics);
-    }
-    if (weas.hasOwnProperty('currentWeather'))
-      set(ref(db,`weatherCache/${weas.statics.id}/currentWeather`),weas.currentWeather);
-    if (weas.hasOwnProperty('forecast'))
-      set(ref(db,`weatherCache/${weas.statics.id}/forecast`),weas.forecast);
-    if (weas.hasOwnProperty('pollution'))
-      set(ref(db,`weatherCache/${weas.statics.id}/pollution`),weas.pollution);
-  })
+
+// const newCard = createCard(); newCard.id = 'troll';
+// document.getElementById('other-pinned').append(newCard);
+// remote().then(location => getAllWeather(location)).then(weas => {
+//   fillElement(newCard,weas);
+//   fillElement(document.getElementsByClassName('favorite-container')[0],weas);
+// })
+
+
+//favorite-container ne e vo realtime vrzano so placesStored
+//other-places e; pri dodavanje na nov grad, se dodava na site instanci koisto gi koristi korisnikot; isto kako i so brisenje
+
+//za inicijalizacija: fav se vcituva vo favorite-container
+//na sekoja promena na others, se updateiraat kartickite dolu (funkcija onOthersChange)
+//objekt vo koj se cuva mete.info. za sekoe od mestata koe se vcituva - key-value par na id i val
+
+const localWeatherCache = {};
+const localStaticsCache = {};
+
+
+async function getFullWeather(id) {
+  if (!localWeatherCache.hasOwnProperty(id) || !localWeatherCache[id].hasOwnProperty('pollution')) {
+    const location = w.idToLoc(id);
+    const vals = await Promise.all([getBasicWeather(id),w.getPollution(location)]);
+    localWeatherCache[id] = {...vals[0], ...vals[1]};
+  }
+  return localWeatherCache[id];
 }
 
-const newCard = createCard(); newCard.id = 'troll';
-document.getElementById('other-pinned').append(newCard);
-remote().then(location => getAllWeather(location)).then(weas => {
-  fillElement(newCard,weas);
-  fillElement(document.getElementsByClassName('favorite-container')[0],weas);
+async function getBasicWeather(id) {
+  if (!localWeatherCache.hasOwnProperty(id)) {
+    const location = w.idToLoc(id);
+    const vals = await Promise.all([w.getCurrentWeather(location), w.getForecast(location)]);
+    localWeatherCache[id] = {...vals[0],...vals[1]};
+  }
+  return localWeatherCache[id];
+}
+
+async function getStatics(id) {
+  if (!localStaticsCache.hasOwnProperty(id)) {
+
+  }
+}
+
+async function generatePlacesEntry(query) {
+  if (typeof query !== 'undefined') {
+    var location = await w.geolocate(query);
+    var data = location;
+  }
+  else {
+    console.log("test");
+    var location = await remote();
+    var data = await getBasicWeather(w.locToId(location));
+  }
+  localStaticsCache[w.locToId(location)] = {
+    nameEN: data.nameEN,
+    nameMK: data.nameMK
+  }
+}
+
+if (debug)
+  window.paket = {localStaticsCache, placesStored};
+
+const favoriteContainer = document.getElementsByClassName('favorite-container')[0];
+
+//Locate kopce
+document.getElementById('locate').onclick = (() => {
+  browser().then(location => {
+    getFullWeather(w.locToId(location)).then(weather => {
+      w.fillElement(favoriteContainer, weather);
+    })
+  })
 })
+//Search kopce
+document.getElementById('search').onclick = (() => {
+  const query = document.getElementById('search-input').value;
+  generatePlacesEntry(query);
+})
+
+function initialisePlaces() {
+  console.log(placesStored);
+}
+
+//Za da se keshiraat staticite na nekoe mesto mora
+//1: da e importirano od db/placesStored
+//  placesStored
+//    favId
+//    statici (na update na placesStored se azurira)
+//    ^ da bide key-value par za da moze da se bara od nego
+//2: da e dodadeno so locate
+//3: da e dodadeno so prebaruvanje
