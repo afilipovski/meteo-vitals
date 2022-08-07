@@ -31,7 +31,16 @@ export function createCard() {
 function getIconURL(icon) {return `https://openweathermap.org/img/wn/${icon}@2x.png`}
 
 export function fillElement(element, id, staticsObject, weatherObject) {
-
+    if (element.classList.contains('favorite-container')) {
+        if (id === placesStored['favId'])
+            element.querySelector('#home').classList.remove('active');
+        else
+            element.querySelector('#home').classList.add('active');
+        if (!placesStored['statics'].hasOwnProperty(id))
+            element.querySelector('#add').classList.add('active');
+        else
+            element.querySelector('#add').classList.remove('active');
+    } 
     element.id = id;
     element.querySelector('.name').innerHTML = ll.getLocalisedPlaceName(staticsObject);
     element.querySelector('.temperature').innerHTML = ll.getLocalisedTemperature(weatherObject.currentWeather.temp);
@@ -127,12 +136,15 @@ export async function getForecast({latitude : lat, longitude : lon}) {
             })(),
             dailyForecast : (() => {
                 let i=1;
+                let currentDay = new Date();
+                currentDay = currentDay.getDate();
                 const dateOfIndex = (index) => {
                     return unixDate(raw["list"][index]["dt"] + raw["city"]["timezone"]);
                 }
-                while(dateOfIndex(i-1).day === dateOfIndex(i).day && i<40) i++;
+                while(currentDay === dateOfIndex(i).day && i<40) i++;
                 let res = [];
                 let minTemp, maxTemp;
+                minTemp = maxTemp = raw["list"][i]["main"]["temp_min"];
                 let counts = {};
                 while(i<40) {
                     if (dateOfIndex(i-1).day !== dateOfIndex(i).day) {
@@ -191,8 +203,8 @@ export async function geolocate(name) {
     else
         var raw = await URLRequest("../api_local/geolocation.json");
     return {
-        nameEN: raw[0]['local_names']['en'],
-        nameMK: raw[0]['local_names']['mk'] || raw[0]['local_names']['en'],
+        nameEN: raw[0]['local_names']['en'] || raw[0]['name'],
+        nameMK: raw[0]['local_names']['mk'] || raw[0]['local_names']['en'] || raw[0]['name'],
         latitude : raw[0]['lat'],
         longitude : raw[0]['lon']
     }

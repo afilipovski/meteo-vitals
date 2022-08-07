@@ -147,25 +147,35 @@ async function onOptionsStoredChange() {
 import { browser, remote } from "./js/location.js"
 import * as w from "./js/weather.js"
 
-let placesStored;
+window.placesStored = null;
 
 //INTERFEJS NA PLACESSTORED
 function setFav(id) {
-  if (placesStored.fav !== id) {
+  if (placesStored['favId'] !== id) {
+    placesStored['favId'] = id;
     filterCard(id);
-    placesStored.fav = id;
   }
 }
 function pushCard(id) {
-  if(!placesStored.others.includes(id)) {
-    placesStored.others.push(id);
+  if(!placesStored['statics'].hasOwnProperty(id)) {
+    placesStored['statics'][id] = localStaticsCache[id];
   }
+  if(!auth) {
+    renderWeather();
+    localStorage.setItem('places',JSON.stringify(placesStored));
+  }
+  else set(ref(db, `users/${auth.currentUser.uid}/places`),placesStored);
 }
 function filterCard(id) {
-  if (placesStored.others.includes(id)) {
-    placesStored.others = placesStored.others.filter(x => x !== id);
+  if (placesStored['statics'].hasOwnProperty(id)) {
+    delete placesStored['statics'][id];
     document.getElementById(id).remove();
   }
+  if(!auth) {
+    renderWeather();
+    localStorage.setItem('places',JSON.stringify(placesStored));
+  }
+  else set(ref(db, `users/${auth.currentUser.uid}/places`),placesStored);
 }
 
 //Inicijalizacija
@@ -173,20 +183,21 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     const placesRef = ref(db,`users/${user.uid}/places`);
     
-    get(placesRef).then(snapshot => {
-      if(snapshot.exists()) {
-        placesStored = snapshot.val();
-      }
-      else {
-        set(placesRef,placesStored);
-      }
-      initialisePlaces();
-    });
+    // get(placesRef).then(snapshot => {
+    //   if(snapshot.exists()) {
+    //     placesStored = snapshot.val();
+    //   }
+    //   else {
+    //     set(placesRef,placesStored);
+    //   }
+    //   initialisePlaces();
+    // });
 
     onValue(placesRef, (snapshot) => {
       if(snapshot.exists()) {
+        console.log("promena vo db reg");
         placesStored = snapshot.val();
-        onPlacesStoredChange();
+        renderWeather();
       }
       else {
         set(placesRef,placesStored);
@@ -206,16 +217,36 @@ onAuthStateChanged(auth, (user) => {
           nameMK : entry.nameMK
         }
         localStorage.setItem('places',JSON.stringify(placesStored));
-        initialisePlaces();
       })
     }
-    else initialisePlaces();
-    onPlacesStoredChange();
+    renderWeather();
   }
 })
 
-function onPlacesStoredChange() {
-  console.log('placesstored change');
+async function renderWeather() {
+  const favContainerId = favoriteContainer.id || placesStored['favId']; //odnovo renderiranje za ikonite ako veke e inic
+  await fillElementId(favoriteContainer, favContainerId);
+  //Ciklus niz site elementi vo placesStored, dokolku za nekoj nemame generirano karticka, generirame
+  for (const px in placesStored['statics']) {
+    console.log("push --- FCID: "+favoriteContainer.id+
+                "\nPX: "+px+
+                "\nELEM: "+document.getElementById(px));
+    if(px !== favoriteContainer.id && !document.getElementById(px)) {
+      console.log("CREATING");
+      const card = w.createCard();
+      await fillElementId(card,px);
+      document.getElementById('other-pinned').append(card);
+    }
+  }
+  //Ciklus niz site karticki
+  const cards = document.getElementById('other-pinned').children;
+  for (const cx of cards) {
+    console.log("rem --- FCID: "+favoriteContainer.id+
+                "\nCX: "+cx.id+
+                "\nELEM: "+document.getElementById(cx));
+    if(!placesStored['statics'].hasOwnProperty(cx.id) || cx.id === favoriteContainer.id)
+      cx.remove();
+  }  
 }
 
 // const newCard = createCard(); newCard.id = 'troll';
@@ -256,8 +287,8 @@ async function getBasicWeather(id) {
 }
 
 function getStatics(id) {
-  if (localStaticsCache.hasOwnProperty(id)) return localStaticsCache[id];
   if (placesStored['statics'].hasOwnProperty(id)) return placesStored['statics'][id];
+  if (localStaticsCache.hasOwnProperty(id)) return localStaticsCache[id];
 }
 
 
@@ -271,16 +302,16 @@ async function generatePlacesEntry(query, isLocation = true) {
     var location = await w.geolocate(query);
     var data = location;
   }
-  return {
-    id: w.locToId(location),
+  const id = w.locToId(location);
+  localStaticsCache[id] = {
     nameEN: data.nameEN,
     nameMK: data.nameMK
   }
+  return {
+    id: w.locToId(location),
+    ...localStaticsCache[id]
+  }
 }
-
-
-if (debug)
-  window.paket = {localStaticsCache, placesStored};
 
 const favoriteContainer = document.getElementsByClassName('favorite-container')[0];
 
@@ -288,10 +319,7 @@ const favoriteContainer = document.getElementsByClassName('favorite-container')[
 document.getElementById('locate').onclick = (() => {
   browser().then(location => {
     generatePlacesEntry(location).then(entry => {
-      localStaticsCache[entry.id] = {nameEN: entry.nameEN, nameMK: entry.nameMK};
-      getFullWeather(entry.id).then((weather) => {
-        w.fillElement(favoriteContainer, entry.id, entry, weather);
-      })
+      fillElementId(favoriteContainer, entry.id).then(renderWeather);
     });
   })
 })
@@ -299,19 +327,17 @@ document.getElementById('locate').onclick = (() => {
 document.getElementById('search').onclick = (() => {
   const query = document.getElementById('search-input').value;
   generatePlacesEntry(query, false).then(entry => {
-    localStaticsCache[entry.id] = {nameEN: entry.nameEN, nameMK: entry.nameMK};
-    getFullWeather(entry.id).then((weather) => {
-      w.fillElement(favoriteContainer, entry.id, entry, weather);
-    })
+    fillElementId(favoriteContainer, entry.id).then(renderWeather);
   });
-
 })
-
-async function initialisePlaces() {
-  const id = placesStored['favId'];
-  const favWeather = await getFullWeather(id); 
-  w.fillElement(favoriteContainer, id, placesStored['statics'][id], favWeather);
-}
+//Home kopce
+document.getElementById('home').onclick = (() => {
+  fillElementId(favoriteContainer, placesStored['favId']).then(renderWeather);
+})
+//Add kopce
+document.getElementById('add').onclick = (() => {
+  pushCard(favoriteContainer.id);
+})
 
 //Za da se keshiraat staticite na nekoe mesto mora
 //1: da e importirano od db/placesStored
@@ -321,3 +347,8 @@ async function initialisePlaces() {
 //    ^ da bide key-value par za da moze da se bara od nego
 //2: da e dodadeno so locate
 //3: da e dodadeno so prebaruvanje
+
+async function fillElementId(element, id) {
+  const weather = (element === favoriteContainer ? await getFullWeather(id) : await getBasicWeather(id));
+  w.fillElement(element, id, getStatics(id), weather);
+}

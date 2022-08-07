@@ -1,5 +1,8 @@
 body {
-    background: lightskyblue;
+    background: linear-gradient(31deg, black, transparent);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
 }
 #main-content {
     max-width: min(90%, 900px);
@@ -8,6 +11,9 @@ body {
 .favorite-container {
     max-width: 700px;
     margin: auto;
+}
+.favorite-container:not([id]) {
+    display: none;
 }
 .favorite-container>* {
     margin-left:auto;
@@ -150,4 +156,15 @@ body {
 }
 .card>div:first-of-type {
     max-width: 90%;
+}
+.actions {
+    margin-top: 10px;
+}
+.actions svg {
+    fill: rgba(255, 255, 255, 0.5);
+    padding: 5px;
+    height: 30px;
+}
+.actions>svg:not(.active) {
+    display: none;
 }
