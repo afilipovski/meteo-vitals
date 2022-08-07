@@ -73,6 +73,9 @@ body {
 .hourly>*:not(*:last-child){
     margin-right: 10px;
 }
+.hourly>* {
+    flex-shrink: 0;
+}
 .hourly h5 {
     margin-top: 0;
 }

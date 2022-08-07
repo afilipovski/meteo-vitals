@@ -30,38 +30,34 @@ export function createCard() {
 
 function getIconURL(icon) {return `https://openweathermap.org/img/wn/${icon}@2x.png`}
 
-export function fillElement(element, weas) {
+export function fillElement(element, id, staticsObject, weatherObject) {
 
-    if(debug)
-        console.log("SPREAD OPERATOR TEST:\n",weas);
-
-
-    element.id = weas.statics.id;
-    element.querySelector('.name').innerHTML = ll.getLocalisedPlaceName(weas);
-    element.querySelector('.temperature').innerHTML = ll.getLocalisedTemperature(weas.currentWeather.temp);
+    element.id = id;
+    element.querySelector('.name').innerHTML = ll.getLocalisedPlaceName(staticsObject);
+    element.querySelector('.temperature').innerHTML = ll.getLocalisedTemperature(weatherObject.currentWeather.temp);
     element.querySelector('.feels-like-text').innerHTML = ll.getLocalisedText('feels-like') + " ";
-    element.querySelector('.feels-like').innerHTML = ll.getLocalisedTemperature(weas.currentWeather.realFeel);
+    element.querySelector('.feels-like').innerHTML = ll.getLocalisedTemperature(weatherObject.currentWeather.realFeel);
     element.querySelector('.pressure-text').innerHTML = ll.getLocalisedText('pressure') + ": ";
-    element.querySelector('.pressure').innerHTML = ll.getLocalisedPressure(weas.currentWeather.pressure);
+    element.querySelector('.pressure').innerHTML = ll.getLocalisedPressure(weatherObject.currentWeather.pressure);
     element.querySelector('.humidity-text').innerHTML = ll.getLocalisedText('humidity') + ": ";
-    element.querySelector('.humidity').innerHTML = weas.currentWeather.humidity+"%";
-    element.querySelector('.weather-icon').src = getIconURL(weas.currentWeather.icon);
+    element.querySelector('.humidity').innerHTML = weatherObject.currentWeather.humidity+"%";
+    element.querySelector('.weather-icon').src = getIconURL(weatherObject.currentWeather.icon);
     if (element.querySelector('.aqi')) {
-        element.querySelector('.aqi').innerHTML = weas.pollution;
+        element.querySelector('.aqi').innerHTML = weatherObject.pollution;
     }
     if (element.querySelector('.forecast')) {
         const hourlyArr = element.querySelector('.hourly').querySelectorAll('div');
         for (let i=0; i<8; i++) {
-            hourlyArr[i].querySelector('img').src = getIconURL(weas['forecast']['hourlyForecast'][i]['icon']);
-            hourlyArr[i].querySelectorAll('h5')[0].innerHTML = ll.getLocalisedTemperature(weas['forecast']['hourlyForecast'][i]['temp']);
-            hourlyArr[i].querySelectorAll('h5')[1].innerHTML = ll.getLocalisedTime(weas['forecast']['hourlyForecast'][i]['hour']);
+            hourlyArr[i].querySelector('img').src = getIconURL(weatherObject['forecast']['hourlyForecast'][i]['icon']);
+            hourlyArr[i].querySelectorAll('h5')[0].innerHTML = ll.getLocalisedTemperature(weatherObject['forecast']['hourlyForecast'][i]['temp']);
+            hourlyArr[i].querySelectorAll('h5')[1].innerHTML = ll.getLocalisedTime(weatherObject['forecast']['hourlyForecast'][i]['hour']);
         }
         const dailyArr = element.querySelector('.daily').querySelectorAll('.cols');
         for (let i=0; i<4; i++) {
-            dailyArr[i].querySelector('img').src = getIconURL(weas['forecast']['dailyForecast'][i]['icon']);
-            dailyArr[i].querySelector('.date').innerHTML = ll.getLocalisedDate(weas['forecast']['dailyForecast'][i]['date']);
-            dailyArr[i].querySelector('.low').innerHTML = ll.getLocalisedTemperature(weas['forecast']['dailyForecast'][i]['low']);
-            dailyArr[i].querySelector('.high').innerHTML = ll.getLocalisedTemperature(weas['forecast']['dailyForecast'][i]['high']);
+            dailyArr[i].querySelector('img').src = getIconURL(weatherObject['forecast']['dailyForecast'][i]['icon']);
+            dailyArr[i].querySelector('.date').innerHTML = ll.getLocalisedDate(weatherObject['forecast']['dailyForecast'][i]['date']);
+            dailyArr[i].querySelector('.low').innerHTML = ll.getLocalisedTemperature(weatherObject['forecast']['dailyForecast'][i]['low']);
+            dailyArr[i].querySelector('.high').innerHTML = ll.getLocalisedTemperature(weatherObject['forecast']['dailyForecast'][i]['high']);
         }
     }
 }
@@ -203,13 +199,15 @@ export async function geolocate(name) {
 }
 
 export function locToId({latitude : lat, longitude : lon}) {
-    return lat.toString() + ',' + lon.toString();
+    lat = Math.trunc(lat * Math.pow(10,decimalPrecision));
+    lon = Math.trunc(lon * Math.pow(10,decimalPrecision));
+    return lat.toString() + '_' + lon.toString();
 }
 
 export function idToLoc(id) {
-    id = id.split(',');
+    id = id.split('_');
     return {
-        latitude: id[0],
-        longitude: id[1]
+        latitude : parseInt(id[0])/Math.pow(10,decimalPrecision),
+        longitude : parseInt(id[1])/Math.pow(10,decimalPrecision)
     }
 }

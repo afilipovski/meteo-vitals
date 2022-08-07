@@ -86,7 +86,6 @@ window.onload = function () {
   })
 }
 
-
 function updateSetting(setting, choice) {
   if (debug) console.log(`${setting} set to ${choice}`);
   optionsStored[setting] = choice;
@@ -97,13 +96,6 @@ function updateSetting(setting, choice) {
   else {
     localStorage.setItem('options',JSON.stringify(optionsStored));
     onOptionsStoredChange();
-  }
-}
-
-function checkActive() {
-  for(let x in options) {
-    for(let y of options[x])
-      document.getElementById(y).checked = (optionsStored[x] === y);
   }
 }
 
@@ -121,20 +113,36 @@ onAuthStateChanged(auth, (user) => {
     })
     
   }
-  else {
+  //Tuka e zagarantirano deka ke postoi bidejki vo options.js e opfaten sprotivniot slucaj
+  else { 
     optionsStored = JSON.parse(localStorage.getItem('options'));
     onOptionsStoredChange();
   }
 })
 
-
 //PO SEKOJA PROMENA NA OPTIONSSTORED, SE POVIKUVA OVAA FUNKCIJA
 //Se povikuva samo vo slucai kade korisnikot ne e logiran - bidejki dokolku e, e povikana od onValue
-function onOptionsStoredChange() {
-  checkActive();
+async function onOptionsStoredChange() {
+  //Chekiranje na aktivni opcii
+  for(let x in options) {
+    for(let y of options[x])
+      document.getElementById(y).checked = (optionsStored[x] === y);
+  }
+  //Filuvanje na elementite NO NE PRED DA BIDAT ZEMENI STATICITE
+  if (placesStored) {
+    let weather = await getFullWeather(favoriteContainer.id);
+    w.fillElement(favoriteContainer,favoriteContainer.id,getStatics(favoriteContainer.id),weather);
+    const cards = document.getElementById('other-pinned').children;
+    for (const cx of cards) {
+      weather = await getBasicWeather(cx.id);
+      w.fillElement(cx,cx.id,getStatics(cx.id),weather);
+    }
+  }
 }
 
+
 //VREME
+
 
 import { browser, remote } from "./js/location.js"
 import * as w from "./js/weather.js"
@@ -166,12 +174,19 @@ onAuthStateChanged(auth, (user) => {
     const placesRef = ref(db,`users/${user.uid}/places`);
     
     get(placesRef).then(snapshot => {
+      if(snapshot.exists()) {
+        placesStored = snapshot.val();
+      }
+      else {
+        set(placesRef,placesStored);
+      }
       initialisePlaces();
-    }).catch(() => set(placesRef,placesStored));
+    });
 
     onValue(placesRef, (snapshot) => {
       if(snapshot.exists()) {
         placesStored = snapshot.val();
+        onPlacesStoredChange();
       }
       else {
         set(placesRef,placesStored);
@@ -181,20 +196,27 @@ onAuthStateChanged(auth, (user) => {
   else {
     placesStored = JSON.parse(localStorage.getItem('places'));
     if (!placesStored) {
-      generatePlacesEntry().then(() => {
+      generatePlacesEntry().then(entry => {
         placesStored = {
-          fav: {...localStaticsCache},
-          others: []
+          favId: entry.id,
+          statics: {}
         }
-
-        console.log(placesStored);
+        placesStored.statics[entry.id] = {
+          nameEN : entry.nameEN,
+          nameMK : entry.nameMK
+        }
+        localStorage.setItem('places',JSON.stringify(placesStored));
+        initialisePlaces();
       })
     }
-    else
-      initialisePlaces();
+    else initialisePlaces();
+    onPlacesStoredChange();
   }
 })
 
+function onPlacesStoredChange() {
+  console.log('placesstored change');
+}
 
 // const newCard = createCard(); newCard.id = 'troll';
 // document.getElementById('other-pinned').append(newCard);
@@ -233,27 +255,29 @@ async function getBasicWeather(id) {
   return localWeatherCache[id];
 }
 
-async function getStatics(id) {
-  if (!localStaticsCache.hasOwnProperty(id)) {
-
-  }
+function getStatics(id) {
+  if (localStaticsCache.hasOwnProperty(id)) return localStaticsCache[id];
+  if (placesStored['statics'].hasOwnProperty(id)) return placesStored['statics'][id];
 }
 
-async function generatePlacesEntry(query) {
-  if (typeof query !== 'undefined') {
+
+//Generira statici za mesto. Se koristi samo koga mestoto e dosega nesretnato
+async function generatePlacesEntry(query, isLocation = true) {
+  if (isLocation) {
+    var location = query || await remote();
+    var data = await getBasicWeather(w.locToId(location));
+  }
+  else {
     var location = await w.geolocate(query);
     var data = location;
   }
-  else {
-    console.log("test");
-    var location = await remote();
-    var data = await getBasicWeather(w.locToId(location));
-  }
-  localStaticsCache[w.locToId(location)] = {
+  return {
+    id: w.locToId(location),
     nameEN: data.nameEN,
     nameMK: data.nameMK
   }
 }
+
 
 if (debug)
   window.paket = {localStaticsCache, placesStored};
@@ -263,19 +287,30 @@ const favoriteContainer = document.getElementsByClassName('favorite-container')[
 //Locate kopce
 document.getElementById('locate').onclick = (() => {
   browser().then(location => {
-    getFullWeather(w.locToId(location)).then(weather => {
-      w.fillElement(favoriteContainer, weather);
-    })
+    generatePlacesEntry(location).then(entry => {
+      localStaticsCache[entry.id] = {nameEN: entry.nameEN, nameMK: entry.nameMK};
+      getFullWeather(entry.id).then((weather) => {
+        w.fillElement(favoriteContainer, entry.id, entry, weather);
+      })
+    });
   })
 })
 //Search kopce
 document.getElementById('search').onclick = (() => {
   const query = document.getElementById('search-input').value;
-  generatePlacesEntry(query);
+  generatePlacesEntry(query, false).then(entry => {
+    localStaticsCache[entry.id] = {nameEN: entry.nameEN, nameMK: entry.nameMK};
+    getFullWeather(entry.id).then((weather) => {
+      w.fillElement(favoriteContainer, entry.id, entry, weather);
+    })
+  });
+
 })
 
-function initialisePlaces() {
-  console.log(placesStored);
+async function initialisePlaces() {
+  const id = placesStored['favId'];
+  const favWeather = await getFullWeather(id); 
+  w.fillElement(favoriteContainer, id, placesStored['statics'][id], favWeather);
 }
 
 //Za da se keshiraat staticite na nekoe mesto mora

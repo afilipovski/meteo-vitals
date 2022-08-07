@@ -39,8 +39,8 @@ export function getLocalisedText(id) {
     return (optionsStored['language'] === 'macedonian') ? mk[id] : en[id];
 }
 //DA SE POPRAVI
-export function getLocalisedPlaceName(weas) {
-    return (optionsStored['language'] === 'macedonian') ? weas['statics']['nameMK'] : weas['statics']['nameEN'];
+export function getLocalisedPlaceName(statics) {
+    return (optionsStored['language'] === 'macedonian') ? statics['nameMK'] : statics['nameEN'];
 }
 export function getLocalisedTime(time) {
     if (optionsStored['timeFormat'] === '24hour')
@@ -63,6 +63,6 @@ export function getLocalisedTemperature(temperature) {
 }
 export function getLocalisedPressure(pressure) {
     if (optionsStored['pressure'] === 'inhg')
-        pressure = (pressure/33.864).toFixed(2) + 'in';
+        return (pressure/33.864).toFixed(2) + 'in';
     return Math.round(pressure) + 'hPa';
 }
