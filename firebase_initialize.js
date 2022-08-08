@@ -130,13 +130,7 @@ async function onOptionsStoredChange() {
   }
   //Filuvanje na elementite NO NE PRED DA BIDAT ZEMENI STATICITE
   if (placesStored) {
-    let weather = await getFullWeather(favoriteContainer.id);
-    w.fillElement(favoriteContainer,favoriteContainer.id,getStatics(favoriteContainer.id),weather);
-    const cards = document.getElementById('other-pinned').children;
-    for (const cx of cards) {
-      weather = await getBasicWeather(cx.id);
-      w.fillElement(cx,cx.id,getStatics(cx.id),weather);
-    }
+    renderWeather();
   }
 }
 
@@ -167,32 +161,23 @@ function pushCard(id) {
   else set(ref(db, `users/${auth.currentUser.uid}/places`),placesStored);
 }
 function filterCard(id) {
-  if (placesStored['statics'].hasOwnProperty(id)) {
-    delete placesStored['statics'][id];
-    document.getElementById(id).remove();
+  if (id !== placesStored['favId']) {
+    if (placesStored['statics'].hasOwnProperty(id)) {
+      delete placesStored['statics'][id];
+      document.getElementById(id).remove();
+    }
+    if(!auth) {
+      renderWeather();
+      localStorage.setItem('places',JSON.stringify(placesStored));
+    }
+    else set(ref(db, `users/${auth.currentUser.uid}/places`),placesStored);
   }
-  if(!auth) {
-    renderWeather();
-    localStorage.setItem('places',JSON.stringify(placesStored));
-  }
-  else set(ref(db, `users/${auth.currentUser.uid}/places`),placesStored);
 }
 
 //Inicijalizacija
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const placesRef = ref(db,`users/${user.uid}/places`);
-    
-    // get(placesRef).then(snapshot => {
-    //   if(snapshot.exists()) {
-    //     placesStored = snapshot.val();
-    //   }
-    //   else {
-    //     set(placesRef,placesStored);
-    //   }
-    //   initialisePlaces();
-    // });
-
     onValue(placesRef, (snapshot) => {
       if(snapshot.exists()) {
         console.log("promena vo db reg");
@@ -206,6 +191,7 @@ onAuthStateChanged(auth, (user) => {
   }
   else {
     placesStored = JSON.parse(localStorage.getItem('places'));
+    console.log("NOT LOGGED IN NOT LOGGED IN");
     if (!placesStored) {
       generatePlacesEntry().then(entry => {
         placesStored = {
@@ -217,9 +203,12 @@ onAuthStateChanged(auth, (user) => {
           nameMK : entry.nameMK
         }
         localStorage.setItem('places',JSON.stringify(placesStored));
+        renderWeather();
       })
     }
-    renderWeather();
+    else {
+      renderWeather();
+    }
   }
 })
 
@@ -228,24 +217,24 @@ async function renderWeather() {
   await fillElementId(favoriteContainer, favContainerId);
   //Ciklus niz site elementi vo placesStored, dokolku za nekoj nemame generirano karticka, generirame
   for (const px in placesStored['statics']) {
-    console.log("push --- FCID: "+favoriteContainer.id+
+    if (debug) console.log("push --- FCID: "+favoriteContainer.id+
                 "\nPX: "+px+
                 "\nELEM: "+document.getElementById(px));
     if(px !== favoriteContainer.id && !document.getElementById(px)) {
-      console.log("CREATING");
       const card = w.createCard();
       await fillElementId(card,px);
       document.getElementById('other-pinned').append(card);
     }
   }
-  //Ciklus niz site karticki
-  const cards = document.getElementById('other-pinned').children;
+  //Ciklus niz site karticki (spread operatorot iskoristen za da imame konzistenten array i pokraj trganje na elem.)
+  const cards = [...document.getElementById('other-pinned').children];
   for (const cx of cards) {
-    console.log("rem --- FCID: "+favoriteContainer.id+
-                "\nCX: "+cx.id+
-                "\nELEM: "+document.getElementById(cx));
-    if(!placesStored['statics'].hasOwnProperty(cx.id) || cx.id === favoriteContainer.id)
+    if(!placesStored['statics'].hasOwnProperty(cx.id) || cx.id === favoriteContainer.id) {
+      console.log(cx.querySelector('.name').innerHTML + " to be removed");
       cx.remove();
+    }
+    else
+      fillElementId(cx,cx.id);
   }  
 }
 
@@ -271,8 +260,17 @@ const localStaticsCache = {};
 async function getFullWeather(id) {
   if (!localWeatherCache.hasOwnProperty(id) || !localWeatherCache[id].hasOwnProperty('pollution')) {
     const location = w.idToLoc(id);
-    const vals = await Promise.all([getBasicWeather(id),w.getPollution(location)]);
+    const vals = await Promise.all([getWeatherAndForecast(id),w.getPollution(location)]);
     localWeatherCache[id] = {...vals[0], ...vals[1]};
+  }
+  return localWeatherCache[id];
+}
+
+async function getWeatherAndForecast(id) {
+  if (!localWeatherCache.hasOwnProperty(id) || !localWeatherCache[id].hasOwnProperty('forecast')) {
+    const location = w.idToLoc(id);
+    const vals = await Promise.all([getBasicWeather(id), w.getForecast(location)]);
+    localWeatherCache[id] = {...vals[0],...vals[1]};
   }
   return localWeatherCache[id];
 }
@@ -280,8 +278,8 @@ async function getFullWeather(id) {
 async function getBasicWeather(id) {
   if (!localWeatherCache.hasOwnProperty(id)) {
     const location = w.idToLoc(id);
-    const vals = await Promise.all([w.getCurrentWeather(location), w.getForecast(location)]);
-    localWeatherCache[id] = {...vals[0],...vals[1]};
+    const vals = await w.getCurrentWeather(location);
+    localWeatherCache[id] = vals;
   }
   return localWeatherCache[id];
 }
@@ -296,7 +294,7 @@ function getStatics(id) {
 async function generatePlacesEntry(query, isLocation = true) {
   if (isLocation) {
     var location = query || await remote();
-    var data = await getBasicWeather(w.locToId(location));
+    var data = await getWeatherAndForecast(w.locToId(location));
   }
   else {
     var location = await w.geolocate(query);
@@ -314,6 +312,8 @@ async function generatePlacesEntry(query, isLocation = true) {
 }
 
 const favoriteContainer = document.getElementsByClassName('favorite-container')[0];
+import {openModal, closeModal} from "./js/modal.js";
+import { getLocalisedText } from "./js/localisation.js";
 
 //Locate kopce
 document.getElementById('locate').onclick = (() => {
@@ -328,6 +328,8 @@ document.getElementById('search').onclick = (() => {
   const query = document.getElementById('search-input').value;
   generatePlacesEntry(query, false).then(entry => {
     fillElementId(favoriteContainer, entry.id).then(renderWeather);
+  }).catch(err => {
+    openModal(getLocalisedText('error'),getLocalisedText('no-results')+query);
   });
 })
 //Home kopce
@@ -349,6 +351,11 @@ document.getElementById('add').onclick = (() => {
 //3: da e dodadeno so prebaruvanje
 
 async function fillElementId(element, id) {
-  const weather = (element === favoriteContainer ? await getFullWeather(id) : await getBasicWeather(id));
+  const weather = (element === favoriteContainer ? await getFullWeather(id) : await getBasicWeather(id)); //SAMO MOMENTALNO
   w.fillElement(element, id, getStatics(id), weather);
+  const closeButton = element.querySelector('.close');
+  if (closeButton)
+    closeButton.onclick = (() => {
+      filterCard(id);
+    })
 }

@@ -15,7 +15,8 @@ const en = {
     //TO-DO: opisi za vremeto
     'humidity':'Humidity',
     //TO-DO: opisi za zagaduvanje
-
+    'error':'Error',
+    'no-results':'No results were found for '
 }
 const mk = {
     'search-input':'Пребарај...',
@@ -34,6 +35,8 @@ const mk = {
     //TO-DO: opisi za vremeto
     'humidity':'Влажност',
     //TO-DO: opisi za zagaduvanje
+    'error':'Грешка',
+    'no-results':'Не беа пронајдени резултати за '
 }
 export function getLocalisedText(id) {
     return (optionsStored['language'] === 'macedonian') ? mk[id] : en[id];
@@ -44,11 +47,11 @@ export function getLocalisedPlaceName(statics) {
 }
 export function getLocalisedTime(time) {
     if (optionsStored['timeFormat'] === '24hour')
-        return time+":00";
-    if (time>12)
-        return time-12+" PM";
+        return (time < 10 ? "0" : "")+time+":00";
+    if (time>=12)
+        return (time % 12 ? time%12 : 12)+" PM";
     else
-        return time+" PM";
+        return (time % 12 ? time%12 : 12)+" AM";
 }
 export function getLocalisedDate({year : year, month : month, day : day}) {
     if (optionsStored['dates'] === 'dmy')

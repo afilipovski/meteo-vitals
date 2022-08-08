@@ -154,6 +154,10 @@ body {
 .card > * {
     margin: auto;
 }
+.card .close {
+    height: 10px;
+    margin-right: 10px;
+}
 .card>div:first-of-type {
     max-width: 90%;
 }

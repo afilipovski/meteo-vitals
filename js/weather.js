@@ -4,6 +4,9 @@ import * as ll from "./localisation.js"
 export function createCard() {
     const card = document.createElement('div');
     card.classList.add('card'); card.classList.add('cols');
+    const close = document.createElement('img'); close.classList.add('close');
+    close.setAttribute('src','../images/Black_close_x.svg');
+    card.append(close);
     const firstDiv = document.createElement('div');
         const name = document.createElement('h2'); name.classList.add('name');
         const pressureContainer = document.createElement('p');
@@ -138,6 +141,7 @@ export async function getForecast({latitude : lat, longitude : lon}) {
                 let i=1;
                 let currentDay = new Date();
                 currentDay = currentDay.getDate();
+                console.log("Today is the "+currentDay+"th");
                 const dateOfIndex = (index) => {
                     return unixDate(raw["list"][index]["dt"] + raw["city"]["timezone"]);
                 }
@@ -147,7 +151,7 @@ export async function getForecast({latitude : lat, longitude : lon}) {
                 minTemp = maxTemp = raw["list"][i]["main"]["temp_min"];
                 let counts = {};
                 while(i<40) {
-                    if (dateOfIndex(i-1).day !== dateOfIndex(i).day) {
+                    if (dateOfIndex(i-1).day !== currentDay && dateOfIndex(i-1).day !== dateOfIndex(i).day) {
                         if (typeof minTemp !== 'undefined') { //Za da se izbegne push na prazni podatoci
                             let maxIcon;
                             for (let x in counts) {
@@ -159,7 +163,7 @@ export async function getForecast({latitude : lat, longitude : lon}) {
                             res.push({
                                 low : minTemp,
                                 high : maxTemp,
-                                date : dateOfIndex(i-1), //DA SE ADJUSTNE ZA VREMENSKA ZONA
+                                date : dateOfIndex(i-1),
                                 icon : maxIcon
                             });
                         }
