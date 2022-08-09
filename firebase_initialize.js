@@ -79,7 +79,8 @@ window.onload = function () {
       //Se dodavaat site inputi koi se del od fieldsetot kako alternativi, im se naznacuva onclick funkcija
       Array.from(element.elements).forEach(alternative => {
           alternative.onclick = function() {
-              updateSetting(element.id,alternative.id);
+              if (optionsStored[element.id] !== alternative.id)
+                updateSetting(element.id,alternative.id);
           };
           options[element.id].push(alternative.id);
       });
@@ -99,6 +100,8 @@ function updateSetting(setting, choice) {
   }
 }
 
+import {getDefaults} from "./js/options.js"
+
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const optionsRef = ref(db,`users/${user.uid}/options`);
@@ -115,14 +118,19 @@ onAuthStateChanged(auth, (user) => {
   }
   //Tuka e zagarantirano deka ke postoi bidejki vo options.js e opfaten sprotivniot slucaj
   else { 
-    optionsStored = JSON.parse(localStorage.getItem('options'));
-    onOptionsStoredChange();
+    getDefaults().then(defaults => {
+      optionsStored = defaults;
+      localStorage.setItem('options',JSON.stringify(optionsStored));
+      onOptionsStoredChange();
+    })
   }
 })
 
 //PO SEKOJA PROMENA NA OPTIONSSTORED, SE POVIKUVA OVAA FUNKCIJA
 //Se povikuva samo vo slucai kade korisnikot ne e logiran - bidejki dokolku e, e povikana od onValue
 async function onOptionsStoredChange() {
+  //Menuvanje na jazik kaj interfejs
+  localiseInterface();
   //Chekiranje na aktivni opcii
   for(let x in options) {
     for(let y of options[x])
@@ -147,14 +155,18 @@ window.placesStored = null;
 function setFav(id) {
   if (placesStored['favId'] !== id) {
     placesStored['favId'] = id;
-    filterCard(id);
+    if (!auth.currentUser) {
+      localStorage.setItem('places',JSON.stringify(placesStored))
+      renderWeather();
+    }
+    else set(ref(db, `users/${auth.currentUser.uid}/places`),placesStored);
   }
 }
 function pushCard(id) {
   if(!placesStored['statics'].hasOwnProperty(id)) {
     placesStored['statics'][id] = localStaticsCache[id];
   }
-  if(!auth) {
+  if(!auth.currentUser) {
     renderWeather();
     localStorage.setItem('places',JSON.stringify(placesStored));
   }
@@ -166,7 +178,7 @@ function filterCard(id) {
       delete placesStored['statics'][id];
       document.getElementById(id).remove();
     }
-    if(!auth) {
+    if(!auth.currentUser) {
       renderWeather();
       localStorage.setItem('places',JSON.stringify(placesStored));
     }
@@ -191,7 +203,6 @@ onAuthStateChanged(auth, (user) => {
   }
   else {
     placesStored = JSON.parse(localStorage.getItem('places'));
-    console.log("NOT LOGGED IN NOT LOGGED IN");
     if (!placesStored) {
       generatePlacesEntry().then(entry => {
         placesStored = {
@@ -213,6 +224,7 @@ onAuthStateChanged(auth, (user) => {
 })
 
 async function renderWeather() {
+  console.log("WEATHER RENDERED");
   const favContainerId = favoriteContainer.id || placesStored['favId']; //odnovo renderiranje za ikonite ako veke e inic
   await fillElementId(favoriteContainer, favContainerId);
   //Ciklus niz site elementi vo placesStored, dokolku za nekoj nemame generirano karticka, generirame
@@ -258,6 +270,7 @@ const localStaticsCache = {};
 
 
 async function getFullWeather(id) {
+  console.log("FULL WEATHER");
   if (!localWeatherCache.hasOwnProperty(id) || !localWeatherCache[id].hasOwnProperty('pollution')) {
     const location = w.idToLoc(id);
     const vals = await Promise.all([getWeatherAndForecast(id),w.getPollution(location)]);
@@ -313,7 +326,7 @@ async function generatePlacesEntry(query, isLocation = true) {
 
 const favoriteContainer = document.getElementsByClassName('favorite-container')[0];
 import {openModal, closeModal} from "./js/modal.js";
-import { getLocalisedText } from "./js/localisation.js";
+import { getLocalisedText, localiseInterface } from "./js/localisation.js";
 
 //Locate kopce
 document.getElementById('locate').onclick = (() => {
@@ -334,11 +347,17 @@ document.getElementById('search').onclick = (() => {
 })
 //Home kopce
 document.getElementById('home').onclick = (() => {
+  if (debug) console.log("HOME");
   fillElementId(favoriteContainer, placesStored['favId']).then(renderWeather);
 })
 //Add kopce
 document.getElementById('add').onclick = (() => {
+  if (debug) console.log("ADD");
   pushCard(favoriteContainer.id);
+})
+document.getElementById('star').onclick = (() => {
+  if (debug) console.log("STAR");
+  setFav(favoriteContainer.id);
 })
 
 //Za da se keshiraat staticite na nekoe mesto mora
@@ -353,9 +372,14 @@ document.getElementById('add').onclick = (() => {
 async function fillElementId(element, id) {
   const weather = (element === favoriteContainer ? await getFullWeather(id) : await getBasicWeather(id)); //SAMO MOMENTALNO
   w.fillElement(element, id, getStatics(id), weather);
-  const closeButton = element.querySelector('.close');
-  if (closeButton)
-    closeButton.onclick = (() => {
+  if (element.classList.contains('card')) {
+    element.querySelector('.close').onclick = (event => {
+      event.stopPropagation();
       filterCard(id);
     })
+    element.onclick = (() => {
+      favoriteContainer.id = element.id;
+      renderWeather();
+    })
+  }
 }

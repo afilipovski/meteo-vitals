@@ -1,43 +1,55 @@
 const en = {
     'search-input':'Search...',
     'sync':'Sync',
-    'language-and-time':'Language & Time',
-    'language':'Language',
-    'time-format':'Time format',
-    '24hour':'24-hour',
-    '12hour':'12-hour',
-    'dates':'Dates',
+    'languageandtime':'Language & Time',
+    'languagelb':'Language:',
+    'timeFormatlb':'Time format:',
+    '24hourlb':'24-hour',
+    '12hourlb':'12-hour',
+    'dateslb':'Dates:',
     'measurements':'Measurements',
-    'temperature':'Temperature',
+    'temperaturelb':'Temperature:',
     'pressure':'Pressure',
-    'view':'View',
+    'pressurelb':'Pressure:',
     'feels-like':'Feels like',
     //TO-DO: opisi za vremeto
     'humidity':'Humidity',
     //TO-DO: opisi za zagaduvanje
     'error':'Error',
-    'no-results':'No results were found for '
+    'no-results':'No results were found for ',
+    'logout':'Log out'
 }
 const mk = {
     'search-input':'Пребарај...',
     'sync':'Синхронизација',
-    'language-and-time':'Јазик и време',
-    'language':'Јазик',
-    'time-format':'Формат на време',
-    '24hour':'24-часовен',
-    '12hour':'12-часовен',
-    'dates':'Датуми',
+    'languageandtime':'Јазик и време',
+    'languagelb':'Јазик:',
+    'timeFormatlb':'Формат на време:',
+    '24hourlb':'24-часовен',
+    '12hourlb':'12-часовен',
+    'dateslb':'Датуми:',
     'measurements':'Мерки',
-    'temperature':'Температура',
+    'temperaturelb':'Температура:',
     'pressure':'Притисок',
-    'view':'Преглед',
+    'pressurelb':'Притисок:',
     'feels-like':'Се чувствува како',
     //TO-DO: opisi za vremeto
     'humidity':'Влажност',
     //TO-DO: opisi za zagaduvanje
     'error':'Грешка',
-    'no-results':'Не беа пронајдени резултати за '
+    'no-results':'Не беа пронајдени резултати за ',
+    'logout':'Одјави се'
 }
+
+const interfaceTextElements = ['sync','logout','languageandtime','languagelb','timeFormatlb',
+'24hourlb','12hourlb','dateslb','measurements','temperaturelb','pressurelb'];
+export function localiseInterface() {
+    document.getElementById('search-input').placeholder = getLocalisedText('search-input');
+    for (let iTEx of interfaceTextElements) {
+        document.getElementById(iTEx).innerHTML = getLocalisedText(iTEx);
+    }
+}
+
 export function getLocalisedText(id) {
     return (optionsStored['language'] === 'macedonian') ? mk[id] : en[id];
 }

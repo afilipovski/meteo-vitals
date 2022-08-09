@@ -43,7 +43,17 @@ export function fillElement(element, id, staticsObject, weatherObject) {
             element.querySelector('#add').classList.add('active');
         else
             element.querySelector('#add').classList.remove('active');
-    } 
+        if (id !== placesStored['favId'] && placesStored['statics'].hasOwnProperty(id))
+            element.querySelector('#star').classList.add('active');
+        else
+        element.querySelector('#star').classList.remove('active');
+    }
+    else {
+        if (id !== placesStored['favId'])
+            element.querySelector('.close').classList.add('active');
+        else
+            element.querySelector('.close').classList.remove('active');
+    }
     element.id = id;
     element.querySelector('.name').innerHTML = ll.getLocalisedPlaceName(staticsObject);
     element.querySelector('.temperature').innerHTML = ll.getLocalisedTemperature(weatherObject.currentWeather.temp);

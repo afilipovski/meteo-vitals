@@ -4,12 +4,6 @@ import { getCurrentWeather } from "./weather.js"
 window.options = {};
 window.optionsStored = JSON.parse(localStorage.getItem('options'));
 
-//Ako e prv pat otvaranje na browser, generiraj defaulti
-if (!optionsStored) {
-    optionsStored = await getDefaults();
-    localStorage.setItem('options',JSON.stringify(optionsStored));
-}
-
 export async function getDefaults() {
     const {countryCode : cc} = await remote(); //Zemanje country code od ip lokacija
     return {

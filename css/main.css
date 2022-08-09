@@ -169,6 +169,6 @@ body {
     padding: 5px;
     height: 30px;
 }
-.actions>svg:not(.active) {
+.actions>svg:not(.active), .close:not(.active) {
     display: none;
 }

@@ -14,13 +14,13 @@
     <!-- DIREKTIVI -->
     <script>
         //pecatenje za activate() i deactivate() vo interface.js, updateSetting() vo options.js
-        const debug = true;
+        const debug = false;
         //500ms zastoj za URLRequest(), simulacija za asinhron tek na skriptata
         const simulateDelay = false;
         //pecatenje na URLRequest() baranja
         const printRequest = true;
         //lokalni api povici
-        const localAPICalls = true;
+        const localAPICalls = false;
         //preciznost za lokacii
         const decimalPrecision = 3;
     </script>
@@ -72,25 +72,24 @@
                 <path d="m209 15a195 195 0 1 0 2 0z" stroke-width="26"/>
                 <path d="m210 15v390m195-195h-390m44-120a260 260 0 0 0 302 0m0 240a260 260 0 0 0-302 0m136-310a250 250 0 0 0 0 382m30 0a250 250 0 0 0 0-382" stroke-width="18"/>
             </svg>
-            <?xml version="1.0" encoding="UTF-8"?>
             <svg id="options-button" fill="#fff" viewBox="0 0 640 512" xmlns="http://www.w3.org/2000/svg" onclick="toggle(this.id)">
                 <path d="M610.5 373.3c2.6-14.1 2.6-28.5 0-42.6l25.8-14.9c3-1.7 4.3-5.2 3.3-8.5-6.7-21.6-18.2-41.2-33.2-57.4-2.3-2.5-6-3.1-9-1.4l-25.8 14.9c-10.9-9.3-23.4-16.5-36.9-21.3v-29.8c0-3.4-2.4-6.4-5.7-7.1-22.3-5-45-4.8-66.2 0-3.3.7-5.7 3.7-5.7 7.1v29.8c-13.5 4.8-26 12-36.9 21.3l-25.8-14.9c-2.9-1.7-6.7-1.1-9 1.4-15 16.2-26.5 35.8-33.2 57.4-1 3.3.4 6.8 3.3 8.5l25.8 14.9c-2.6 14.1-2.6 28.5 0 42.6l-25.8 14.9c-3 1.7-4.3 5.2-3.3 8.5 6.7 21.6 18.2 41.1 33.2 57.4 2.3 2.5 6 3.1 9 1.4l25.8-14.9c10.9 9.3 23.4 16.5 36.9 21.3v29.8c0 3.4 2.4 6.4 5.7 7.1 22.3 5 45 4.8 66.2 0 3.3-.7 5.7-3.7 5.7-7.1v-29.8c13.5-4.8 26-12 36.9-21.3l25.8 14.9c2.9 1.7 6.7 1.1 9-1.4 15-16.2 26.5-35.8 33.2-57.4 1-3.3-.4-6.8-3.3-8.5l-25.8-14.9zM496 400.5c-26.8 0-48.5-21.8-48.5-48.5s21.8-48.5 48.5-48.5 48.5 21.8 48.5 48.5-21.7 48.5-48.5 48.5zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm201.2 226.5c-2.3-1.2-4.6-2.6-6.8-3.9l-7.9 4.6c-6 3.4-12.8 5.3-19.6 5.3-10.9 0-21.4-4.6-28.9-12.6-18.3-19.8-32.3-43.9-40.2-69.6-5.5-17.7 1.9-36.4 17.9-45.7l7.9-4.6c-.1-2.6-.1-5.2 0-7.8l-7.9-4.6c-16-9.2-23.4-28-17.9-45.7.9-2.9 2.2-5.8 3.2-8.7-3.8-.3-7.5-1.2-11.4-1.2h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c10.1 0 19.5-3.2 27.2-8.5-1.2-3.8-2-7.7-2-11.8v-9.2z"/>
             </svg>
         </div>
     </nav>
     <div id="options-menu">
-        <h3>Sync</h3>
+        <h3 id="sync">Sync</h3>
             <script src="https://accounts.google.com/gsi/client" async defer></script>
             <div class="active" id="buttonDiv">
                 <!-- So skripta se popolnuva sodrzinata po vcituvanje na celata stranica -->
             </div>
             <div id="logoutDiv">
                 <p> <!--Logged in as:--> </p>
-                <button>Log out</button>
+                <button id="logout">Log out</button>
             </div>
-        <h3>Language & Time</h3>
+        <h3 id="languageandtime">Language & Time</h3>
         <fieldset id="language" class="cols">
-            <legend>Language:</legend>
+            <legend id="languagelb">Language:</legend>
             <div>
                 <input type="radio" id="macedonian"><label for="macedonian">
                     <img class="flag" src="images/Flag_of_North_Macedonia.svg" alt="Македонски" title="Македонски">
@@ -101,34 +100,32 @@
             </div>
         </fieldset>
         <fieldset id="timeFormat" class="cols">
-            <legend>Time format: </legend>
+            <legend id="timeFormatlb">Time format: </legend>
             <div>
-                <input type="radio" id="24hour"><label for="24hour">24-hour</label>
-                <input type="radio" id="12hour"><label for="12hour">12-hour</label>
+                <input type="radio" id="24hour"><label id="24hourlb" for="24hour">24-hour</label>
+                <input type="radio" id="12hour"><label id="12hourlb" for="12hour">12-hour</label>
             </div>
         </fieldset>
         <fieldset id="dates" class="cols">
-            <legend>Dates: </legend>
+            <legend id="dateslb">Dates: </legend>
             <div>
                 <input type="radio" id="dmy"><label for="dmy">DD.MM.YYYY</label>
                 <input type="radio" id="mdy"><label for="mdy">MM/DD/YYYY</label>
             </div>
         </fieldset>
-        <h3>Measurements</h3>
+        <h3 id="measurements">Measurements</h3>
         <fieldset id="temperature" class="cols">
-            <legend>Temperature: </legend>
+            <legend id="temperaturelb">Temperature: </legend>
             <div>
                 <input type="radio" id="celsius"><label for="celsius">°C</label>
                 <input type="radio" id="fahrenheit"><label for="fahrenheit">°F</label>
             </div>
         </fieldset>
         <fieldset id="pressure" class="cols">
-            <legend>Pressure: </legend>
+            <legend id="pressurelb">Pressure: </legend>
             <div><input type="radio" id="hpa"><label for="hpa">hPa</label>
                 <input type="radio" id="inhg"><label for="inhg">inHg</label></div>
         </fieldset>
-
-        <h3>View</h3>
 
     </div>
     <div id="main-content">
@@ -240,7 +237,10 @@
                         d="m351.27 312.97h-29.983c-0.022 14.366 0 52.16 0 52.16s-32.529 
                         0-48.621 0.043v29.962c16.09-0.022 48.621-0.022 48.621-0.022s0 37.749-0.022 52.18h29.983c0.022-14.431 
                         0.022-52.18 0.022-52.18h48.599v-29.983h-48.599s-0.043-37.791 0-52.16"/>
-                        </svg>
+                    </svg>
+                    <svg id="star" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 7h-7L10 .5 7 7H0l5.46 5.47-1.64 7 6.18-3.7 6.18 3.73-1.63-7z"/>
+                    </svg>
                 </div>
             </div>
         </div>
