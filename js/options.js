@@ -2,7 +2,6 @@ import { remote } from "./location.js"
 import { getCurrentWeather } from "./weather.js"
 
 window.options = {};
-window.optionsStored = JSON.parse(localStorage.getItem('options'));
 
 export async function getDefaults() {
     const {countryCode : cc} = await remote(); //Zemanje country code od ip lokacija

@@ -161,22 +161,21 @@ export async function getForecast({latitude : lat, longitude : lon}) {
                 minTemp = maxTemp = raw["list"][i]["main"]["temp_min"];
                 let counts = {};
                 while(i<40) {
-                    if (dateOfIndex(i-1).day !== currentDay && dateOfIndex(i-1).day !== dateOfIndex(i).day) {
-                        if (typeof minTemp !== 'undefined') { //Za da se izbegne push na prazni podatoci
-                            let maxIcon;
-                            for (let x in counts) {
-                                if (typeof maxIcon === 'undefined') maxIcon = x;
-                                if (counts[x] > counts[maxIcon]) {
-                                    maxIcon = x;
-                                }
+                    if ((dateOfIndex(i-1).day !== currentDay && dateOfIndex(i-1).day !== dateOfIndex(i).day)
+                    || i===39) {
+                        let maxIcon;
+                        for (let x in counts) {
+                            if (typeof maxIcon === 'undefined') maxIcon = x;
+                            if (counts[x] > counts[maxIcon]) {
+                                maxIcon = x;
                             }
-                            res.push({
-                                low : minTemp,
-                                high : maxTemp,
-                                date : dateOfIndex(i-1),
-                                icon : maxIcon
-                            });
                         }
+                        res.push({
+                            low : minTemp,
+                            high : maxTemp,
+                            date : dateOfIndex(i-1),
+                            icon : maxIcon
+                        });
                         minTemp = maxTemp = raw["list"][i]["main"]["temp_min"];
                         counts = {};
                     }
@@ -185,8 +184,6 @@ export async function getForecast({latitude : lat, longitude : lon}) {
                     minTemp = (temp < minTemp) ? temp : minTemp;
                     let icon = raw["list"][i]["weather"][0]["icon"];
                     if (icon[icon.length-1] === 'n') {
-                        if (debug)
-                            console.log(`Transforming ${icon} into ${icon.slice(0,icon.length-1) + 'd'}`);
                         icon = icon.slice(0,icon.length-1) + 'd';
                     }
                         counts[icon] = counts.hasOwnProperty(icon) ? counts[icon]+1 : 1;

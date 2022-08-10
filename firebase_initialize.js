@@ -101,6 +101,7 @@ function updateSetting(setting, choice) {
 }
 
 import {getDefaults} from "./js/options.js"
+window.optionsStored = null;
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -118,11 +119,16 @@ onAuthStateChanged(auth, (user) => {
   }
   //Tuka e zagarantirano deka ke postoi bidejki vo options.js e opfaten sprotivniot slucaj
   else { 
-    getDefaults().then(defaults => {
-      optionsStored = defaults;
-      localStorage.setItem('options',JSON.stringify(optionsStored));
+    optionsStored = JSON.parse(localStorage.getItem('options'));
+    if (!optionsStored) {
+      getDefaults().then(defaults => {
+        optionsStored = defaults;
+        localStorage.setItem('options',JSON.stringify(optionsStored));
+        onOptionsStoredChange();
+      })
+    }
+    else
       onOptionsStoredChange();
-    })
   }
 })
 
@@ -188,6 +194,7 @@ function filterCard(id) {
 
 //Inicijalizacija
 onAuthStateChanged(auth, (user) => {
+  delete favoriteContainer.id;
   if (user) {
     const placesRef = ref(db,`users/${user.uid}/places`);
     onValue(placesRef, (snapshot) => {
@@ -224,30 +231,33 @@ onAuthStateChanged(auth, (user) => {
 })
 
 async function renderWeather() {
-  console.log("WEATHER RENDERED");
-  const favContainerId = favoriteContainer.id || placesStored['favId']; //odnovo renderiranje za ikonite ako veke e inic
-  await fillElementId(favoriteContainer, favContainerId);
-  //Ciklus niz site elementi vo placesStored, dokolku za nekoj nemame generirano karticka, generirame
-  for (const px in placesStored['statics']) {
-    if (debug) console.log("push --- FCID: "+favoriteContainer.id+
-                "\nPX: "+px+
-                "\nELEM: "+document.getElementById(px));
-    if(px !== favoriteContainer.id && !document.getElementById(px)) {
-      const card = w.createCard();
-      await fillElementId(card,px);
-      document.getElementById('other-pinned').append(card);
+  if (optionsStored && placesStored) {
+    console.log("WEATHER RENDERED");
+    const favContainerId = favoriteContainer.id || placesStored['favId']; //odnovo renderiranje za ikonite ako veke e inic
+    console.log("FAVCID: "+favoriteContainer.id+"\nPLASFAVID: "+placesStored['favId']+"\nDECI: "+favContainerId);
+    await fillElementId(favoriteContainer, favContainerId);
+    //Ciklus niz site elementi vo placesStored, dokolku za nekoj nemame generirano karticka, generirame
+    for (const px in placesStored['statics']) {
+      if (debug) console.log("push --- FCID: "+favoriteContainer.id+
+                  "\nPX: "+px+
+                  "\nELEM: "+document.getElementById(px));
+      if(px !== favoriteContainer.id && !document.getElementById(px)) {
+        const card = w.createCard();
+        await fillElementId(card,px);
+        document.getElementById('other-pinned').append(card);
+      }
     }
+    //Ciklus niz site karticki (spread operatorot iskoristen za da imame konzistenten array i pokraj trganje na elem.)
+    const cards = [...document.getElementById('other-pinned').children];
+    for (const cx of cards) {
+      if(!placesStored['statics'].hasOwnProperty(cx.id) || cx.id === favoriteContainer.id) {
+        console.log(cx.querySelector('.name').innerHTML + " to be removed");
+        cx.remove();
+      }
+      else
+        fillElementId(cx,cx.id);
+    }  
   }
-  //Ciklus niz site karticki (spread operatorot iskoristen za da imame konzistenten array i pokraj trganje na elem.)
-  const cards = [...document.getElementById('other-pinned').children];
-  for (const cx of cards) {
-    if(!placesStored['statics'].hasOwnProperty(cx.id) || cx.id === favoriteContainer.id) {
-      console.log(cx.querySelector('.name').innerHTML + " to be removed");
-      cx.remove();
-    }
-    else
-      fillElementId(cx,cx.id);
-  }  
 }
 
 // const newCard = createCard(); newCard.id = 'troll';
