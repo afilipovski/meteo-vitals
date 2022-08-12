@@ -17,7 +17,8 @@ const en = {
     //TO-DO: opisi za zagaduvanje
     'error':'Error',
     'no-results':'No results were found for ',
-    'logout':'Log out'
+    'logout':'Log out',
+    'loggedinas':'Logged in as: '
 }
 const mk = {
     'search-input':'Пребарај...',
@@ -38,10 +39,11 @@ const mk = {
     //TO-DO: opisi za zagaduvanje
     'error':'Грешка',
     'no-results':'Не беа пронајдени резултати за ',
-    'logout':'Одјави се'
+    'logout':'Одјави се',
+    'loggedinas':'Најавен како: '
 }
 
-const interfaceTextElements = ['sync','logout','languageandtime','languagelb','timeFormatlb',
+const interfaceTextElements = ['loggedinas','sync','logout','languageandtime','languagelb','timeFormatlb',
 '24hourlb','12hourlb','dateslb','measurements','temperaturelb','pressurelb'];
 export function localiseInterface() {
     document.getElementById('search-input').placeholder = getLocalisedText('search-input');

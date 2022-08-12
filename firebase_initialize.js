@@ -27,7 +27,7 @@ auth.useDeviceLanguage();
 
 onAuthStateChanged(auth, user => {
   if (user) {
-    document.getElementById('logoutDiv').firstElementChild.innerHTML = "Logged in as: " + user.displayName + " (" + user.email + ")"; 
+    document.getElementById('accountinfo').innerHTML = user.displayName + " (" + user.email + ")"; 
     deactivate('buttonDiv'); activate('logoutDiv');
   } else {
     activate('buttonDiv'); deactivate('logoutDiv');
@@ -104,6 +104,9 @@ import {getDefaults} from "./js/options.js"
 window.optionsStored = null;
 
 onAuthStateChanged(auth, (user) => {
+  optionsStored = null;
+  placesStored = null;
+  favoriteContainer.id = '';
   if (user) {
     const optionsRef = ref(db,`users/${user.uid}/options`);
     onValue(optionsRef, (snapshot) => {
@@ -112,12 +115,21 @@ onAuthStateChanged(auth, (user) => {
         onOptionsStoredChange(); //callback
       }
       else { //ako nema vlez vo db za korisnikot
-        set(optionsRef,optionsStored);
+        set(optionsRef, JSON.parse(localStorage.getItem('options')));
       }
     })
-    
+    const placesRef = ref(db,`users/${user.uid}/places`);
+    onValue(placesRef, (snapshot) => {
+      if(snapshot.exists()) {
+        console.log("promena vo db reg");
+        placesStored = snapshot.val();
+        renderWeather();
+      }
+      else {
+        set(placesRef,JSON.parse(localStorage.getItem('places')));
+      }
+    })
   }
-  //Tuka e zagarantirano deka ke postoi bidejki vo options.js e opfaten sprotivniot slucaj
   else { 
     optionsStored = JSON.parse(localStorage.getItem('options'));
     if (!optionsStored) {
@@ -129,6 +141,24 @@ onAuthStateChanged(auth, (user) => {
     }
     else
       onOptionsStoredChange();
+    placesStored = JSON.parse(localStorage.getItem('places'));
+    if (!placesStored) {
+      generatePlacesEntry().then(entry => {
+        placesStored = {
+          favId: entry.id,
+          statics: {}
+        }
+        placesStored.statics[entry.id] = {
+          nameEN : entry.nameEN,
+          nameMK : entry.nameMK
+        }
+        localStorage.setItem('places',JSON.stringify(placesStored));
+        renderWeather();
+      })
+    }
+    else {
+      renderWeather();
+    }
   }
 })
 
@@ -192,48 +222,11 @@ function filterCard(id) {
   }
 }
 
-//Inicijalizacija
-onAuthStateChanged(auth, (user) => {
-  delete favoriteContainer.id;
-  if (user) {
-    const placesRef = ref(db,`users/${user.uid}/places`);
-    onValue(placesRef, (snapshot) => {
-      if(snapshot.exists()) {
-        console.log("promena vo db reg");
-        placesStored = snapshot.val();
-        renderWeather();
-      }
-      else {
-        set(placesRef,placesStored);
-      }
-    })
-  }
-  else {
-    placesStored = JSON.parse(localStorage.getItem('places'));
-    if (!placesStored) {
-      generatePlacesEntry().then(entry => {
-        placesStored = {
-          favId: entry.id,
-          statics: {}
-        }
-        placesStored.statics[entry.id] = {
-          nameEN : entry.nameEN,
-          nameMK : entry.nameMK
-        }
-        localStorage.setItem('places',JSON.stringify(placesStored));
-        renderWeather();
-      })
-    }
-    else {
-      renderWeather();
-    }
-  }
-})
-
 async function renderWeather() {
+  console.log("OPTIONSSTORED:\n",optionsStored,"\nPLACESSTORED:\n ",placesStored);
   if (optionsStored && placesStored) {
     console.log("WEATHER RENDERED");
-    const favContainerId = favoriteContainer.id || placesStored['favId']; //odnovo renderiranje za ikonite ako veke e inic
+    const favContainerId = (favoriteContainer.id !== '') ? favoriteContainer.id : placesStored['favId']; //odnovo renderiranje za ikonite ako veke e inic
     console.log("FAVCID: "+favoriteContainer.id+"\nPLASFAVID: "+placesStored['favId']+"\nDECI: "+favContainerId);
     await fillElementId(favoriteContainer, favContainerId);
     //Ciklus niz site elementi vo placesStored, dokolku za nekoj nemame generirano karticka, generirame
@@ -342,7 +335,8 @@ import { getLocalisedText, localiseInterface } from "./js/localisation.js";
 document.getElementById('locate').onclick = (() => {
   browser().then(location => {
     generatePlacesEntry(location).then(entry => {
-      fillElementId(favoriteContainer, entry.id).then(renderWeather);
+      favoriteContainer.id = entry.id;
+      renderWeather();
     });
   })
 })

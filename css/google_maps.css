@@ -1,0 +1,13 @@
+#rectangles path {
+    fill: white;
+}
+#rectangles:not(.active), #globe:not(.active) {
+    display: none;
+}
+#map {
+    height: 40vh;
+    width: 100%;
+}
+#other-pinned:not(.active), #map:not(.active) {
+    display: none;
+}

@@ -131,8 +131,8 @@ body {
 
 /* CARDS */
 
-#other-pinned {
-    margin-top: 30px;
+.favorite-container {
+    margin-bottom: 30px;
 }
 .card .weather-icon {
     height: 60px;
@@ -155,8 +155,11 @@ body {
     margin: auto;
 }
 .card .close {
-    height: 10px;
-    margin-right: 10px;
+    box-sizing: content-box;
+    height: 12px;
+    position: absolute;
+    top: 0px; right: 0px;
+    padding: 10px;
 }
 .card>div:first-of-type {
     max-width: 90%;
@@ -171,4 +174,7 @@ body {
 }
 .actions>svg:not(.active), .close:not(.active) {
     display: none;
+}
+.card {
+    position: relative;
 }

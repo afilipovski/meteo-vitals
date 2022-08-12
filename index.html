@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/options.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/google_maps.css">
     <!-- DIREKTIVI -->
     <script>
         //pecatenje za activate() i deactivate() vo interface.js, updateSetting() vo options.js
@@ -68,7 +69,11 @@
             <img id="search" src="images/Magnifying_glass_icon.svg">
         </div>
         <div class="right nowrap">
-            <svg fill="none" stroke="#fff" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+            <svg id="rectangles" enable-background="new 0 0 470.1 470.1" version="1.1" viewBox="0 0 470.1 470.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                <path d="m461.97 113.8h-58.249v-63.679c0-4.487-3.633-8.129-8.129-8.129h-387.46c-4.487 0-8.129 3.642-8.129 8.129v298.04c0 4.495 3.642 8.129 8.129 8.129h58.249v63.679c0 4.495 3.642 8.129 8.129 8.129h387.46c4.495 0 8.129-3.633 8.129-8.129v-298.04c-1e-3 -4.495-3.643-8.129-8.13-8.129zm-445.71 226.24v-281.79h371.21v55.551h-312.95c-4.487 0-8.129 3.642-8.129 8.129v218.11h-50.129zm437.59 71.807h-371.21v-281.78h371.2v281.78h9e-3z" fill="#010002"/>
+            </svg>
+            
+            <svg id="globe" class="active" fill="none" stroke="#fff" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
                 <path d="m209 15a195 195 0 1 0 2 0z" stroke-width="26"/>
                 <path d="m210 15v390m195-195h-390m44-120a260 260 0 0 0 302 0m0 240a260 260 0 0 0-302 0m136-310a250 250 0 0 0 0 382m30 0a250 250 0 0 0 0-382" stroke-width="18"/>
             </svg>
@@ -84,7 +89,10 @@
                 <!-- So skripta se popolnuva sodrzinata po vcituvanje na celata stranica -->
             </div>
             <div id="logoutDiv">
-                <p> <!--Logged in as:--> </p>
+                <p>
+                    <span id="loggedinas">Logged in as:</span>
+                    <span id="accountinfo"></span>
+                </p>
                 <button id="logout">Log out</button>
             </div>
         <h3 id="languageandtime">Language & Time</h3>
@@ -244,13 +252,17 @@
                 </div>
             </div>
         </div>
-        <div id="other-pinned" class="center">                           
+        <div id="other-pinned" class="active center">                           
         </div>
+        <div id="map"></div>
     </div>
     <script src="js/interface.js"></script>
     <script type="module" src="js/weather.js"></script>
     <script type="module" src="js/localisation.js"></script>
+    <script src="js/google_maps.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&v=weekly" defer></script>
     <script type="module" src="js/firebase_output.js"></script>
+    <script type="module" ></script>
 </body>
 </html>
 <!--

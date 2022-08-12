@@ -99,7 +99,7 @@ nav input {
     }
 }
 @media (min-width: 586px) {
-    nav svg:not(#logo):hover, nav .active {
+    nav svg:not(#logo):hover, #options-button.active {
         background: #444;
     }
 }
