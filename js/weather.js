@@ -5,7 +5,7 @@ export function createCard() {
     const card = document.createElement('div');
     card.classList.add('card'); card.classList.add('cols');
     const close = document.createElement('img'); close.classList.add('close');
-    close.setAttribute('src','../images/Black_close_x.svg');
+    close.setAttribute('src','images/Black_close_x.svg');
     card.append(close);
     const firstDiv = document.createElement('div');
         const name = document.createElement('h2'); name.classList.add('name');
@@ -33,7 +33,7 @@ export function createCard() {
 
 function getIconURL(icon) {return `https://openweathermap.org/img/wn/${icon}@2x.png`}
 
-export function fillElement(element, id, staticsObject, weatherObject) {
+export function fillElement(element, id, staticsObject, weatherObject, mapInfowindow = false) {
     if (element.classList.contains('favorite-container')) {
         if (id === placesStored['favId'])
             element.querySelector('#home').classList.remove('active');
@@ -54,7 +54,8 @@ export function fillElement(element, id, staticsObject, weatherObject) {
         else
             element.querySelector('.close').classList.remove('active');
     }
-    element.id = id;
+    if (!mapInfowindow)
+        element.id = id;
     element.querySelector('.name').innerHTML = ll.getLocalisedPlaceName(staticsObject);
     element.querySelector('.temperature').innerHTML = ll.getLocalisedTemperature(weatherObject.currentWeather.temp);
     element.querySelector('.feels-like-text').innerHTML = ll.getLocalisedText('feels-like') + " ";

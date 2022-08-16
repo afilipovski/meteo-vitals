@@ -15,7 +15,7 @@
     <!-- DIREKTIVI -->
     <script>
         //pecatenje za activate() i deactivate() vo interface.js, updateSetting() vo options.js
-        const debug = true;
+        const debug = false;
         //500ms zastoj za URLRequest(), simulacija za asinhron tek na skriptata
         const simulateDelay = false;
         //pecatenje na URLRequest() baranja
@@ -254,15 +254,14 @@
         </div>
         <div id="other-pinned" class="active center">                           
         </div>
-        <div id="map"></div>
     </div>
+    <div id="map"></div>
     <script src="js/interface.js"></script>
     <script type="module" src="js/weather.js"></script>
     <script type="module" src="js/localisation.js"></script>
-    <script src="js/google_maps.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&v=weekly" defer></script>
+    <script src="js/maps_utils.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=googleScriptLoadedResolve&v=weekly" defer></script>
     <script type="module" src="js/firebase_output.js"></script>
-    <script type="module" ></script>
 </body>
 </html>
 <!--

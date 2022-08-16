@@ -224,6 +224,7 @@ function filterCard(id) {
 
 async function renderWeather() {
   console.log("OPTIONSSTORED:\n",optionsStored,"\nPLACESSTORED:\n ",placesStored);
+
   if (optionsStored && placesStored) {
     console.log("WEATHER RENDERED");
     const favContainerId = (favoriteContainer.id !== '') ? favoriteContainer.id : placesStored['favId']; //odnovo renderiranje za ikonite ako veke e inic
@@ -251,6 +252,8 @@ async function renderWeather() {
         fillElementId(cx,cx.id);
     }  
   }
+
+  googleScriptLoaded.then(initMap);
 }
 
 // const newCard = createCard(); newCard.id = 'troll';
@@ -329,7 +332,7 @@ async function generatePlacesEntry(query, isLocation = true) {
 
 const favoriteContainer = document.getElementsByClassName('favorite-container')[0];
 import {openModal, closeModal} from "./js/modal.js";
-import { getLocalisedText, localiseInterface } from "./js/localisation.js";
+import { getLocalisedText, localiseInterface, getLocalisedPlaceName } from "./js/localisation.js";
 
 //Locate kopce
 document.getElementById('locate').onclick = (() => {
@@ -373,17 +376,83 @@ document.getElementById('star').onclick = (() => {
 //2: da e dodadeno so locate
 //3: da e dodadeno so prebaruvanje
 
-async function fillElementId(element, id) {
+async function fillElementId(element, id, mapInfowindow = false) {
   const weather = (element === favoriteContainer ? await getFullWeather(id) : await getBasicWeather(id)); //SAMO MOMENTALNO
   w.fillElement(element, id, getStatics(id), weather);
-  if (element.classList.contains('card')) {
-    element.querySelector('.close').onclick = (event => {
-      event.stopPropagation();
-      filterCard(id);
-    })
-    element.onclick = (() => {
-      favoriteContainer.id = element.id;
-      renderWeather();
-    })
+  if (!mapInfowindow) {
+    if (element.classList.contains('card')) {
+      element.querySelector('.close').onclick = (event => {
+        event.stopPropagation();
+        filterCard(id);
+      })
+      element.onclick = (() => {
+        favoriteContainer.id = element.id;
+        renderWeather();
+      })
+    }
   }
 }
+
+//KARTA
+
+let infowindow;
+function fillInfoWindow(id) {
+  const weatherInfowindow = w.createCard();
+  fillElementId(weatherInfowindow,id,true);
+  infowindow = new google.maps.InfoWindow({
+    content: weatherInfowindow,
+    minWidth: 250
+  })
+}
+
+function createMarker(id) {
+  const icon = {
+    url: (id === placesStored['favId']) ? 'images/pin_yellow.png' : 
+    ((!placesStored['statics'].hasOwnProperty(id)) ? 'images/placeholder.png' : 'images/pin.png'),
+    scaledSize: new google.maps.Size(35,35)
+  }
+  const marker = new google.maps.Marker({
+      position: idToGLoc(id),
+      title: getLocalisedPlaceName(getStatics(id)),
+      icon: icon
+  })
+  marker.addListener("click", () => {
+    if (infowindow)
+      infowindow.close();
+    fillInfoWindow(id);
+    infowindow.open({
+      anchor: marker,
+      map,
+      shouldFocus: false,
+    });
+  });
+  marker.setMap(mapObj);
+  return {
+    marker: marker,
+    infowindow: infowindow
+  }
+}
+
+let markers = {};
+let centerId;
+
+function initMap() { googleScriptLoaded.then(() => {
+  if (!centerId)
+    centerId = favoriteContainer.id;
+
+  for (let mx in markers)
+    markers[mx]['marker'].setMap(null);
+  markers = {};
+  
+  if (favoriteContainer.id !== centerId)
+    mapObj.setCenter(idToGLoc(favoriteContainer.id)) //da se polishne
+
+  for (let px in placesStored['statics']) {
+    markers[px] = createMarker(px);
+  }
+  if (!markers.hasOwnProperty(favoriteContainer.id)) {
+    markers[favoriteContainer.id] = createMarker(favoriteContainer.id);
+  }
+
+  centerId = favoriteContainer.id;
+})}
