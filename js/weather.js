@@ -52,7 +52,6 @@ export function fillElement(element, id, staticsObject, weatherObject, mapInfowi
         );
         let finalColor = darken(greyify(Color(135, 206, 250),greyifyFactor),darkenFactor);
         finalColor = `rgb(${finalColor.R} ${finalColor.G} ${finalColor.B})`;
-        console.log(weatherObject);
         if (sunAngle <= 135 && sunAngle >= -135) {
             document.body.style.setProperty(`background-image`,`linear-gradient(${sunAngle}deg, ${finalColor}, transparent)`);
             document.body.style.setProperty(`background-color`,`transparent`);
@@ -187,7 +186,6 @@ export async function getForecast({latitude : lat, longitude : lon}) {
                 let i=1;
                 let currentDay = new Date();
                 currentDay = currentDay.getDate();
-                console.log("Today is the "+currentDay+"th");
                 const dateOfIndex = (index) => {
                     return unixDate(raw["list"][index]["dt"] + raw["city"]["timezone"]);
                 }

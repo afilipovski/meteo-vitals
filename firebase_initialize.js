@@ -45,7 +45,8 @@ function handleCredentialResponse(response) {
     // Handle Errors here.
     const errorCode = error.code;
     const errorMessage = error.message;
-    console.log("Error" + errorCode + ":\n" + errorMessage);
+    if (debug)
+      console.log("Error" + errorCode + ":\n" + errorMessage);
   });
 }
 
@@ -121,7 +122,6 @@ onAuthStateChanged(auth, (user) => {
     const placesRef = ref(db,`users/${user.uid}/places`);
     onValue(placesRef, (snapshot) => {
       if(snapshot.exists()) {
-        console.log("promena vo db reg");
         placesStored = snapshot.val();
         renderWeather();
       }
@@ -223,12 +223,8 @@ function filterCard(id) {
 }
 
 async function renderWeather() {
-  console.log("OPTIONSSTORED:\n",optionsStored,"\nPLACESSTORED:\n ",placesStored);
-
   if (optionsStored && placesStored) {
-    console.log("WEATHER RENDERED");
     const favContainerId = (favoriteContainer.id !== '') ? favoriteContainer.id : placesStored['favId']; //odnovo renderiranje za ikonite ako veke e inic
-    console.log("FAVCID: "+favoriteContainer.id+"\nPLASFAVID: "+placesStored['favId']+"\nDECI: "+favContainerId);
     await fillElementId(favoriteContainer, favContainerId);
     //Ciklus niz site elementi vo placesStored, dokolku za nekoj nemame generirano karticka, generirame
     for (const px in placesStored['statics']) {
@@ -245,7 +241,6 @@ async function renderWeather() {
     const cards = [...document.getElementById('other-pinned').children];
     for (const cx of cards) {
       if(!placesStored['statics'].hasOwnProperty(cx.id) || cx.id === favoriteContainer.id) {
-        console.log(cx.querySelector('.name').innerHTML + " to be removed");
         cx.remove();
       }
       else
@@ -276,7 +271,6 @@ const localStaticsCache = {};
 
 
 async function getFullWeather(id) {
-  console.log("FULL WEATHER");
   if (!localWeatherCache.hasOwnProperty(id) || !localWeatherCache[id].hasOwnProperty('pollution')) {
     const location = w.idToLoc(id);
     const vals = await Promise.all([getWeatherAndForecast(id),w.getPollution(location)]);
