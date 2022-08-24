@@ -31,7 +31,7 @@ export function createCard() {
     return card;
 }
 
-function getIconURL(icon) {return `https://afilipovski.github.io/images/weather/${icon}@2x.png`}
+function getIconURL(icon) {return `images/weather/${icon}@2x.png`}
 
 import {Color, greyify, darken} from "./color_transformations.js";
 
