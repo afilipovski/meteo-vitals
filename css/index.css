@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito&family=Raleway&display=swap');
+
 * {
     box-sizing: border-box;
 }
@@ -19,4 +22,11 @@ ul {
 input:not([type="radio"]):not([type="checkbox"]) {
     -webkit-appearance: none;
     border-radius: 0;
+}
+
+h1,h2,h4 {
+    font-family: 'Raleway';
+}
+* {
+    font-family: 'Nunito';
 }

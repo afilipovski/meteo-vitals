@@ -437,9 +437,6 @@ let markers = {};
 let centerId;
 
 function initMap() { googleScriptLoaded.then(() => {
-  if (!centerId)
-    centerId = favoriteContainer.id;
-
   for (let mx in markers)
     markers[mx]['marker'].setMap(null);
   markers = {};

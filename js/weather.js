@@ -31,10 +31,42 @@ export function createCard() {
     return card;
 }
 
-function getIconURL(icon) {return `https://openweathermap.org/img/wn/${icon}@2x.png`}
+function getIconURL(icon) {return `../images/weather/${icon}@2x.png`}
+
+import {Color, greyify, darken} from "./color_transformations.js";
 
 export function fillElement(element, id, staticsObject, weatherObject, mapInfowindow = false) {
     if (element.classList.contains('favorite-container')) {
+        let dt = weatherObject.currentWeather.dt;
+        let sunrise = weatherObject.currentWeather.time.sunrise;
+        let sunset = weatherObject.currentWeather.time.sunset;
+        let sunAngle = (sunrise !== sunset ?
+            135 * (1 - 2*(dt-sunrise)/(sunset-sunrise)) :
+            180 //Ako nema podatoci za izgrejsonce i zajdisonce, imame ednobojna pozadina
+        );
+
+        const greyifyFactor = weatherObject.currentWeather.clouds / 100;
+        const darkenFactor = (sunrise !== sunset ?
+            (sunAngle > 0 ? sunAngle : -sunAngle) / 180 :
+            0 //Ako nema podatoci za izgrejsonce i zajdisonce, filterot za darken ne se primenuva vrz pozadinata
+        );
+        let finalColor = darken(greyify(Color(135, 206, 250),greyifyFactor),darkenFactor);
+        finalColor = `rgb(${finalColor.R} ${finalColor.G} ${finalColor.B})`;
+        console.log(weatherObject);
+        if (sunAngle <= 135 && sunAngle >= -135) {
+            document.body.style.setProperty(`background-image`,`linear-gradient(${sunAngle}deg, ${finalColor}, transparent)`);
+            document.body.style.setProperty(`background-color`,`transparent`);
+            document.querySelector(".current-weather").style.setProperty(`color`,`black`);
+        }
+        else {
+            document.body.style.setProperty(`background-image`,`none`);
+            document.body.style.setProperty(`background-color`,`${finalColor}`);
+            if (sunrise !== sunset)
+                document.querySelector(".current-weather").style.setProperty(`color`,`white`);
+            else 
+                document.querySelector(".current-weather").style.setProperty(`color`,`black`);
+        }
+
         if (id === placesStored['favId'])
             element.querySelector('#home').classList.remove('active');
         else
@@ -67,6 +99,9 @@ export function fillElement(element, id, staticsObject, weatherObject, mapInfowi
     element.querySelector('.weather-icon').src = getIconURL(weatherObject.currentWeather.icon);
     if (element.querySelector('.aqi')) {
         element.querySelector('.aqi').innerHTML = weatherObject.pollution;
+    }
+    if (element.querySelector('.weather-description')) {
+        element.querySelector('.weather-description').innerHTML = ll.getLocalisedText(weatherObject.currentWeather.id);
     }
     if (element.querySelector('.forecast')) {
         const hourlyArr = element.querySelector('.hourly').querySelectorAll('div');
@@ -205,7 +240,7 @@ export async function getPollution({latitude : lat, longitude : lon}) {
         var raw = await URLRequest(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=d8924a5f87ce36dea6afc7dddbd53f1f`);
     
     return {
-        pollution : raw["list"][0]["main"]["aqi"]
+        pollution : raw["list"][0] ? raw["list"][0]["main"]["aqi"] : "N/A"
     }
 }
 

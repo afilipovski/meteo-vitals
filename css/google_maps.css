@@ -23,6 +23,7 @@
     max-width: 1000px;
     height: 400px;
     margin: auto;
+    border-radius: 10px;
 }
 @media (max-width: 600px) {
     #map {

@@ -1,5 +1,4 @@
 body {
-    background: linear-gradient(31deg, black, transparent);
     background-repeat: no-repeat;
     background-attachment: fixed;
     height: 100vh;
@@ -35,7 +34,7 @@ body {
 .favorite-container .weather-icon {
     display: block;
     margin: auto;
-    width: 100px;
+    width: 60px;
 }
 .prhu-container {
     font-size: 0.92rem;
@@ -52,7 +51,7 @@ body {
 }
 .aqi-container {
     margin-top: 10px;
-    background: greenyellow;
+    color: black;
     padding: 0.5rem 1rem;
 }
 .aqi-container, .hourly, .daily {
@@ -71,7 +70,9 @@ body {
     overflow-x: auto;
 }
 .hourly img {
-    width: 35px;
+    width: 28px;
+    display: block;
+    margin: 5px auto;
 }
 .name::-webkit-scrollbar,.hourly::-webkit-scrollbar {    
     display: none;
@@ -92,10 +93,11 @@ body {
     width: 100%;
 }
 .daily img {
-    height: 26px;
+    height: 20px;
     position: absolute;
     left: 0;
-    margin-left: 40%;
+    right: 0;
+    margin: auto;
 }
 .daily, .hourly, .aqi-container {
     background-color: rgba(255, 255, 255, 0.5);
@@ -111,7 +113,7 @@ body {
     padding: 5px 10px;
 }
 .daily>*:not(div:last-of-type) {
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid rgb(0,0,0,0.2);
 }
 .current-weather {
     padding : 0 10px;
@@ -135,13 +137,16 @@ body {
     margin-bottom: 30px;
 }
 .card .weather-icon {
-    height: 60px;
+    height: 40px;
 }
 .card .name {
     text-align: center;
 }
-.card h5, .card h3 {
+.card h3 {
     margin: 0.5rem 0;
+}
+.card h5 {
+    margin: 0.5rem 0 0 0;
 }
 .card {
     background: rgba(255, 255, 255, 0.5);
@@ -150,6 +155,12 @@ body {
     text-align: center;
     max-width: 90vw;
     margin: 5px;
+}
+.card>div:first-of-type>* {
+    margin: 15px 0;
+}
+#other-pinned .card {
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 30%), 0 6px 20px 0 rgb(0 0 0 / 19%);
 }
 .card > * {
     margin: auto;
