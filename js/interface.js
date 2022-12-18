@@ -58,15 +58,15 @@ function deactivateOnClickOutside(event) {
 document.addEventListener('click',deactivateOnClickOutside);
 
 //Toggle megu pregled na mapa i pregled na karti
-document.getElementById('rectangles').onclick = () => {
-    document.getElementById('rectangles').classList.remove('active');
-    document.getElementById('globe').classList.add('active');
-    document.getElementById('map').classList.remove('active');
-    document.getElementById('other-pinned').classList.add('active');
-}
-document.getElementById('globe').onclick = () => {
-    document.getElementById('globe').classList.remove('active');
-    document.getElementById('rectangles').classList.add('active');
-    document.getElementById('other-pinned').classList.remove('active');
-    document.getElementById('map').classList.add('active');
-}
+// document.getElementById('rectangles').onclick = () => {
+//     document.getElementById('rectangles').classList.remove('active');
+//     document.getElementById('globe').classList.add('active');
+//     document.getElementById('map').classList.remove('active');
+//     document.getElementById('other-pinned').classList.add('active');
+// }
+// document.getElementById('globe').onclick = () => {
+//     document.getElementById('globe').classList.remove('active');
+//     document.getElementById('rectangles').classList.add('active');
+//     document.getElementById('other-pinned').classList.remove('active');
+//     document.getElementById('map').classList.add('active');
+// }

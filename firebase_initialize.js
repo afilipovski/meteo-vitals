@@ -5,13 +5,13 @@ import { get, getDatabase, onValue, ref, set } from "firebase/database"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDiXPzPqxWk6m7Y6hnAuBBytHv-A-AJCGQ",
+  apiKey: "AIzaSyDHqHLlk6RKV0y8FpUiypmED_Fq9WEcp5E",
   authDomain: "meteo-vitals-a84cc.firebaseapp.com",
+  databaseURL: "https://meteo-vitals-a84cc-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "meteo-vitals-a84cc",
   storageBucket: "meteo-vitals-a84cc.appspot.com",
   messagingSenderId: "329885935486",
-  appId: "1:329885935486:web:c8e4c5e494bb4b1d3ff52f",
-  databaseURL: "meteo-vitals-a84cc-default-rtdb.europe-west1.firebasedatabase.app"
+  appId: "1:329885935486:web:c8e4c5e494bb4b1d3ff52f"
 };
 
 // Initialize Firebase
@@ -248,7 +248,7 @@ async function renderWeather() {
     }  
   }
 
-  googleScriptLoaded.then(initMap);
+  // googleScriptLoaded.then(initMap);
 }
 
 // const newCard = createCard(); newCard.id = 'troll';
@@ -389,61 +389,61 @@ async function fillElementId(element, id, mapInfowindow = false) {
 
 //KARTA
 
-let infowindow;
-function fillInfoWindow(id) {
-  const weatherInfowindow = w.createCard();
-  fillElementId(weatherInfowindow,id,true);
-  infowindow = new google.maps.InfoWindow({
-    content: weatherInfowindow,
-    minWidth: 250
-  })
-}
+// let infowindow;
+// function fillInfoWindow(id) {
+//   const weatherInfowindow = w.createCard();
+//   fillElementId(weatherInfowindow,id,true);
+//   infowindow = new google.maps.InfoWindow({
+//     content: weatherInfowindow,
+//     minWidth: 250
+//   })
+// }
 
-function createMarker(id) {
-  const icon = {
-    url: (id === placesStored['favId']) ? 'images/pin_yellow.png' : 
-    ((!placesStored['statics'].hasOwnProperty(id)) ? 'images/placeholder.png' : 'images/pin.png'),
-    scaledSize: new google.maps.Size(35,35)
-  }
-  const marker = new google.maps.Marker({
-      position: idToGLoc(id),
-      title: getLocalisedPlaceName(getStatics(id)),
-      icon: icon
-  })
-  marker.addListener("click", () => {
-    if (infowindow)
-      infowindow.close();
-    fillInfoWindow(id);
-    infowindow.open({
-      anchor: marker,
-      map,
-      shouldFocus: false,
-    });
-  });
-  marker.setMap(mapObj);
-  return {
-    marker: marker,
-    infowindow: infowindow
-  }
-}
+// function createMarker(id) {
+//   const icon = {
+//     url: (id === placesStored['favId']) ? 'images/pin_yellow.png' : 
+//     ((!placesStored['statics'].hasOwnProperty(id)) ? 'images/placeholder.png' : 'images/pin.png'),
+//     scaledSize: new google.maps.Size(35,35)
+//   }
+//   const marker = new google.maps.Marker({
+//       position: idToGLoc(id),
+//       title: getLocalisedPlaceName(getStatics(id)),
+//       icon: icon
+//   })
+//   marker.addListener("click", () => {
+//     if (infowindow)
+//       infowindow.close();
+//     fillInfoWindow(id);
+//     infowindow.open({
+//       anchor: marker,
+//       map,
+//       shouldFocus: false,
+//     });
+//   });
+//   marker.setMap(mapObj);
+//   return {
+//     marker: marker,
+//     infowindow: infowindow
+//   }
+// }
 
-let markers = {};
-let centerId;
+// let markers = {};
+// let centerId;
 
-function initMap() { googleScriptLoaded.then(() => {
-  for (let mx in markers)
-    markers[mx]['marker'].setMap(null);
-  markers = {};
+// function initMap() { googleScriptLoaded.then(() => {
+//   for (let mx in markers)
+//     markers[mx]['marker'].setMap(null);
+//   markers = {};
   
-  if (favoriteContainer.id !== centerId)
-    mapObj.setCenter(idToGLoc(favoriteContainer.id)) //da se polishne
+//   if (favoriteContainer.id !== centerId)
+//     mapObj.setCenter(idToGLoc(favoriteContainer.id)) //da se polishne
 
-  for (let px in placesStored['statics']) {
-    markers[px] = createMarker(px);
-  }
-  if (!markers.hasOwnProperty(favoriteContainer.id)) {
-    markers[favoriteContainer.id] = createMarker(favoriteContainer.id);
-  }
+//   for (let px in placesStored['statics']) {
+//     markers[px] = createMarker(px);
+//   }
+//   if (!markers.hasOwnProperty(favoriteContainer.id)) {
+//     markers[favoriteContainer.id] = createMarker(favoriteContainer.id);
+//   }
 
-  centerId = favoriteContainer.id;
-})}
+//   centerId = favoriteContainer.id;
+// })}
