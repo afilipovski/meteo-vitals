@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/afilipovski/meteo-vitals#readme",
   "dependencies": {
-    "firebase": "^9.9.1"
+    "firebase": "^9.23.0"
   },
   "devDependencies": {
-    "webpack-cli": "^4.10.0"
+    "webpack-cli": "^5.1.4"
   }
 }
